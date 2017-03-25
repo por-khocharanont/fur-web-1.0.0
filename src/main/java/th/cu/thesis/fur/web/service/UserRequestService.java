@@ -1,0 +1,106 @@
+package th.cu.thesis.fur.web.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import th.cu.thesis.fur.web.model.AppFile;
+import th.cu.thesis.fur.web.model.Application;
+import th.cu.thesis.fur.web.model.DataUserRequestValidate;
+import th.cu.thesis.fur.web.model.EligibleOrgAppRoleApp;
+import th.cu.thesis.fur.web.model.UrForUser;
+import th.cu.thesis.fur.web.model.UserRequestFromGrid;
+import th.cu.thesis.fur.web.model.grid.BaseGridResponse;
+import th.cu.thesis.fur.web.model.grid.RequestNoDetail;
+import th.cu.thesis.fur.web.model.grid.UserRequestDetail;
+import th.cu.thesis.fur.web.service.exception.ServiceException;
+
+public interface UserRequestService {
+
+	public Boolean approveAllUrByType(Map<String, Object> params,List<MultipartFile> files) throws ServiceException;
+
+	public Boolean approveUrByType(Map<String, Object> params,List<MultipartFile> files) throws ServiceException;
+
+	public UserRequestDetail getUrDetail(String urId) throws ServiceException;
+
+	public RequestNoDetail getRequestNoDetail(String requestNo)throws ServiceException;
+
+	public List<EligibleOrgAppRoleApp> getListEligiblebyAppNameSpc(String appName, String UserName) throws ServiceException;
+
+	public List<EligibleOrgAppRoleApp> getEligibleListStdDropdownByAppId(String appId) throws ServiceException;
+
+	public List<EligibleOrgAppRoleApp> getEligibleListSpcDropdownByAppId(String appId) throws ServiceException;
+
+//	public BaseGridResponse getEligibleSpcListGridByAppname(Map<String, Object> params);
+
+	public List<AppFile> getListpathfileByRoleappId(Map<String, String> params)throws ServiceException;
+
+	public DataUserRequestValidate validDataPreview(DataUserRequestValidate dataUserRequestValidate)throws ServiceException;
+
+	public String getAuthenTypeByAppId(Map<String, String> params)throws ServiceException;
+
+	public String subMitforCommitdataChg(DataUserRequestValidate dataUserRequestValidate,Map<String, String> dataFormApp,List<Map<String, Object>> listDataChg) throws ServiceException;
+
+	public String subMitforCommitdata(DataUserRequestValidate dataUserRequestValidate,Map<String, String> dataFormApp,List<UserRequestFromGrid> requestFromGrids) throws ServiceException;
+
+	public void generateRemarkErrorurQueued(StringBuilder error,List<Map<String, String>> oplsalreadyAppapp)throws ServiceException;
+
+	public void generateRemarkErroralreadyApp(StringBuilder error,List<Map<String, String>> oplsalreadyAppapp)throws ServiceException;
+
+	public List<String> readExcelTemplate(MultipartFile file)throws ServiceException;
+
+	public List<Map<String, Object>> listurfromSubmit(String idRequestNo)throws ServiceException;
+
+	public List<Map<String, Object>> checkApproverSamePerson(List<String> username) throws ServiceException;
+
+	public List<Map<String, String>> getlistAppChangeByappName(Map<String, String> params, String username)throws ServiceException;
+
+	public BaseGridResponse getlistAppChangeGridByappId(Map<String, Object> params, String username)throws ServiceException;
+
+	public List<Map<String, Object>> listRoleChgAppElm(Map<String, Object> params) throws ServiceException;
+
+	public List<Application> listAppGridByappNameAndType(Map<String, String> params) throws ServiceException;
+
+	public BaseGridResponse getListAppRoleGridByappIdAndType(Map<String, Object> params) throws ServiceException;
+
+	public void generateTerminateRemarkErrorurQueued(StringBuilder error,List<Map<String, Object>> errorsbothAlreadyQueued)throws ServiceException;
+
+	public String subMitforCommitdataTer(DataUserRequestValidate dataUserRequestValidate,Map<String, String> dataFormApp,List<Map<String, Object>> listDataChg);
+
+	void generateTerminateRemarkErrorUrnotAlready(StringBuilder error,List<Map<String, Object>> errorsbothAlreadyQueued)throws ServiceException;
+
+	public List<Map<String, Object>> getListDataFromUserProfileByappRoleId(List<String> appRoleIds) throws ServiceException;
+
+	public List<Map<String, Object>> appListEligiblebyAppNameStd(Map<String, Object> params) throws ServiceException;
+
+	public BaseGridResponse listEligibleStdGridByAppId(Map<String, Object> params) throws ServiceException;
+
+	public List<Map<String, Object>> listAppSpcEligibleByAppname(Map<String, Object> params) throws ServiceException;
+
+	public BaseGridResponse listAppSpcGridEligibleByAppId(Map<String, Object> params) throws ServiceException;
+
+	public BaseGridResponse listEligibleStdGridByAppName(Map<String, Object> params) throws ServiceException;
+
+	public BaseGridResponse listAppSpcGridEligibleByAppName(Map<String, Object> params) throws ServiceException;
+
+	public boolean uploadAppUrTemplateUserRequest(String urNo,List<MultipartFile> listFiles) throws ServiceException;
+
+	public void downloadTemplateUserRequest(String fileName, String filePath,HttpServletResponse httpServletResponse,HttpServletRequest httpServletRequest) throws ServiceException;
+
+	public BaseGridResponse getlistAppChangeGridByappName(Map<String, Object> params) throws ServiceException;
+
+	public BaseGridResponse getListAppRoleGridByappNameAndType(Map<String, Object> params) throws ServiceException;
+
+	Integer getCountExcelTemplate(MultipartFile file) throws ServiceException;
+
+	public BaseGridResponse getlistAppTerAuthorGridByappName(Map<String, Object> params)throws ServiceException;
+
+	boolean validateExcelLengthRecord(Integer length, MultipartFile file) throws ServiceException;
+	
+	public List<UrForUser> reloadTokenUrForUser(List<UrForUser> urForUserList) throws ServiceException;
+
+}

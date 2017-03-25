@@ -1,0 +1,20 @@
+package th.co.ais.mimo.acim.web.service;
+
+import java.util.List;
+import java.util.Map;
+
+import th.co.ais.mimo.acim.web.model.grid.WatchListGridResponse;
+import th.co.ais.mimo.acim.web.repository.model.UserInfo;
+import th.co.ais.mimo.acim.web.service.exception.ServiceException;
+
+public interface WatchListService {
+	
+	public UserInfo getList(String username) throws ServiceException;
+	
+	public WatchListGridResponse searchGridWatchList(Map<String, String> params) throws ServiceException;
+		
+	public void closeUr(List<String> urIdList) throws ServiceException;
+	
+	
+
+}

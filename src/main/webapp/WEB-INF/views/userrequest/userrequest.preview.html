@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>UserRequest</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+var remarkuser = JSON.parse([[${remarkuser}]]); 
+var listapp = JSON.parse([[${listapp}]]);
+var listuser = [[${listuser}]];
+var flagenable = [[${flagenable}]];
+var periodValue = [[${dataFormApp['periodValue']}]];
+var period = [[${dataFormApp['period']}]];
+var errorqueued = [[${dataFormApp['queued']}]];
+var alreadyApp = [[${dataFormApp['alreadyApp']}]];
+/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/res/js/views/userrequest/userrequest.preview.js}">
+</script>
+</head>
+<body>
+	<section layout:fragment="content">
+	<form class="form-horizontal" th:action="@{/userrequest/individual/submitData(${_csrf.parameterName}=${_csrf.token})}" method="POST">
+	<div class="row" >
+		<h1>User Request</h1>
+		<hr>
+		
+			<div class="col-md-12">
+				<div class="col-md-2">
+					</div>
+					<div class="col-md-8" >
+						<div class="form-group" >
+									<label class="col-md-2 control-label">User Type</label>
+									<div class="col-md-6" style="margin-top: 8px;">
+										<span class="form-control-static" th:text="${dataFormApp['usertype']}" ></span>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-2">
+					</div>
+					<div class=" col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label" >Request By</label>
+									<div class="col-md-6" style="margin-top: 8px;">
+										<span class="form-control-static" th:text="${dataFormApp['requestBy']}"></span>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-2">
+					</div>
+					<div class=" col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">User request name</label>
+									<div class="col-md-6" style="margin-top: 8px;">
+										<span class="form-control-static" sec:authentication="principal.firstName"></span>&nbsp
+										<span class="form-control-static" sec:authentication="principal.lastName"></span>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+				</div>
+			</div>
+			<div class="radioRequestBy col-md-12" style="display:none;">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+					<div class="form-group">
+					    <label class="col-md-2 control-label" for="Uploadfile">Attach file</label>
+					    <input type="file" class="col-md-6 form-control-file" id="Uploadfile">
+					    
+					 </div>
+					</div>
+					<div class="col-md-2">
+					</div>
+			</div>
+			<div class="radioRequestBy col-md-12" style="display:none;">
+				<div class="col-md-2">
+				</div>
+				<div class="col-md-8">
+					<div class="form-group">
+						<label class="col-md-2 control-label" >Template File</label>
+						<a class="btn btn-default" >Download</a>
+					</div>
+				</div>
+				<div class="col-md-2">
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Request Type</label>
+									<div class="col-md-6" style="padding-top: 5px;">
+										<span class="form-control-static" th:text="${dataFormApp['requestType']}"></span>
+									</div>
+									
+						</div>
+					</div>
+					<div class="col-md-2">
+				</div>
+			</div>
+			<div class="col-md-12">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Subject</label>
+									<div class="col-md-5" style="padding-top: 8px;">
+										<span class="form-control-static" th:text="${dataFormApp['subject']}" ></span>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+			</div>
+			<div class="col-md-12">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						 <div class="form-group">
+							  <label class="col-md-2 control-label" for="detail">Detail</label>
+							  <div class="col-md-6" style="padding-top: 8px;">
+							 	 <span class="form-control-static" th:text="${dataFormApp['detail']}" ></span>
+							  </div>
+						 </div>
+					</div>
+					<div class="col-md-2">
+					</div>
+			</div>
+			
+			
+		</div>
+		<div class="row">
+			<h1> User List</h1>
+			<hr>
+						<div class="col-md-2">
+						</div>
+						<div class="col-md-8">
+							<div class="row">
+								<table id="userjqGrid"></table>
+				    			<div id="userjqGridPager"></div>
+				    			<a id="editUrl" style="display:none;">editUrl</a>
+							</div><BR>
+							
+						</div>
+						<div class="col-md-2">
+						</div>
+		</div>
+		<h1>Application</h1>
+		<hr>
+		<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Period</label>
+									<div class="col-md-6">
+										<span class="form-control-static" name="period"> </span>
+										<span class="form-control-static" name="dteStart"></span>
+										<span class="form-control-static" name="dteTo">  </span> 
+									</div>
+							</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+		</div>
+		<div class="row">
+					<div class="col-md-1">
+					</div>
+					<div class="col-md-10">
+						<div class="row">
+							<table id="appjqGrid"></table>
+			    			<div id="appjqGridPager"></div>
+			    			<a id="editUrl" style="display:none;">editUrl</a>
+						</div>
+		    		</div>
+		    		<div class="col-md-1">
+					</div>
+		</div>
+		<div class="row" name="divremark" style="display: none;">
+			<h1> UR Remark</h1>
+			<hr>
+			<div class="row">
+		 		<span name="alertErrorUser" class="form-control-static" style="color: red;font-size:20px;" > </span>
+			</div>
+			
+						<div class="col-md-1">
+						</div>
+						<div class="col-md-10">
+							<textarea name="urremark" rows="12" cols="80" readonly="readonly" disabled="disabled" style="overflow-y: scroll; resize: none;"></textarea>
+						</div>
+						<div class="col-md-1">
+						</div>
+		</div>
+		<div class="row">
+					<button name="submitAppJqgrid" type="submit" class="btn btn-default" style="margin-left: 5px;">Submit</button> <button type="button" class="btn btn-default" >Back</button> 
+		</div>
+		</form>
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

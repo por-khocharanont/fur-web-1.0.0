@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Eligible</title>
+<script type="text/javascript"th:src="@{/res/js/views/admin/eligible/eligible.create.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="navigation navi-left">
+				<ul>
+					<img th:src="@{/res/img/icon/admin_inactive.png}" height="42" width="42">
+					<B th:utext="#{common.label.adminpanel}"></B>
+					<li>
+						<a th:href="@{/admin/applications}" th:utext="#{common.label.app}"></a>
+					</li>
+					<li>
+						<a th:href="@{/admin/eligible}" th:utext="#{common.label.eligible}" class ="link-active"></a>
+					</li>
+				</ul>
+				<br>
+			</div>
+
+			<form class="form-horizontal" id="createForm" name="createForm" th:action="@{/admin/eligible}" method="POST">
+				<div class="col-md-12">
+					<h1 class="font-label-title" th:utext="#{common.label.eligible}"></h1>
+					<hr class="hr-line">
+					
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<div class="form-group"></div>
+							<div class="form-group"></div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{eligible.create.label.orgname}"></label>
+								<div class="col-md-5">
+									<input type="text" class="form-control auto-orgDesc " id="orgName" name="orgName" th:action="@{/admin/eligible/autocomplete/orgdesc}" />
+									<input type="hidden" id="orgCode" name="orgCode" value="1"/>
+									<input type="hidden" id="orgDesc" name="orgDesc" />
+									<span style="color: red; display: none; text-align: center;" id="txMsgOrgName" th:utext="#{eligible.error.orgname}"></span>
+									<span style="color: red; display: none; text-align: center;" id="txMsgOrgName2" th:utext="#{eligible.error2.orgname}"></span>
+									<span style="color: red; display: none; text-align: center;" id="txMsgOrgNameLength" th:utext="#{common.error.length.100}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{eligible.create.label.app}"></label>
+								<div class="col-md-5">
+									<input type="text" class="form-control auto-appName" id="appName" name="appName" th:action="@{/admin/applications/autocomplete/appname}" /> 
+	                       			<input type="hidden" id="appId" name="appId" value=""/>
+	                       			<span style="color: red; display: none; text-align: center;" id="txMsgApp" th:utext="#{eligible.error.app}"></span>
+	                       			<span style="color: red; display: none; text-align: center;" id="txMsgApp2" th:utext="#{eligible.error2.app}"></span>
+	                       			<span style="color: red; display: none; text-align: center;" id="txMsgAppLength" th:utext="#{common.error.length.100}"></span>
+								</div>
+							</div>
+							
+							<div class="form-group" style="display:none" id="div-role">
+								<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{eligible.label.approle}"></label>
+								<div class="col-md-5">
+									<label class="checkbox-inline"><input type="checkbox" id="checkAllRole" name="checkAllRole"  value="">Select All Role Application</label>
+									<select class="form-control" id="selectRole" name="selectRole" th:action="@{/admin/applications/approlelist/appId}" ></select>
+								</div>
+		                    </div>
+							
+							<div class="form-group">
+								<div class="btn-panel col-md-12 text-center">
+									<button type="button" class="btn btn-green" id="addBtn" name="addBtn" th:utext="#{common.button.add}"></button>
+									<a class="btn btn-danger" id="cancelBtn" type="cancelBtn" th:href="@{/admin/eligible}" th:utext="#{common.button.cancel}"></a>
+									
+								</div>
+							</div>
+							<div class="form-group text-center">
+								<span style="color: red; display: none; text-align: center;" id="txMsg" th:href="@{/admin/eligible}" th:utext="#{eligible.error.table}"></span>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
+					
+					
+				</div>
+				
+				<div class="col-md-12" style="display:none" id="eligiblePanel">
+					
+					<div class="font-label-title h1 pull-left" th:utext="#{common.label.eligible}">
+					</div>
+					<table class="table table-hover" name="eligibleTable">
+					    <thead>
+					      <tr class="table-header-color">
+					        <th class="col-no" th:utext="#{application.table.title.no}">#</th>
+					        <th class="col-data" th:utext="#{eligible.label.orgcode}">Organization Code</th>
+					        <th class="col-data" th:utext="#{eligible.label.orgname}">Organization Name</th>
+					        <th class="col-data" th:utext="#{eligible.label.app}">Application</th>
+					        <th class="col-data" th:utext="#{eligible.label.approle}">Role Application</th>
+					        <th class="col-data"style="display: none;">APP ROLE ID</th>
+					        <th class="col-action" th:utext="#{eligible.label.action}">Action</th>
+					      </tr>
+					    </thead>
+					    <tbody>
+					      <tr class="tr0" style="display: none;">
+					      	<td class="col-no" data-idx></td>
+							<td class="col-data" data-orgCode></td>
+							<td class="col-data" data-orgName></td>
+							<td class="col-data" data-appName></td>
+							<td class="col-data" data-appRoleName></td>
+							<td class="col-data" data-appRoleId style="display: none;"></td>
+					        <td><img class="remove" th:src="@{/res/img/icon/delete.png}"></img></td>
+					      </tr>
+					    </tbody>
+				  	</table>
+				  	
+				  	<div class="form-group">
+						<div class="btn-panel col-md-12 text-center">
+							<button type="button" class="btn btn-green" id="submitBtn" name="submitBtn" th:utext="#{common.button.submit}"></button>
+							<a class="btn btn-grey" id="backBtn" type="backBtn" th:href="@{/admin/eligible}" th:utext="#{common.button.back}"></a>
+						</div>
+					</div>
+					
+				</div>
+			</form>
+			
+		</div>
+		
+		<div id="dialog-create-confirm" title="Confirmation" th:utext="#{eligible.dialog.confirm}"></div>
+		<div id="dialog-create-success" title="Success" th:utext="#{eligible.dialog.success}"></div>
+		<div id="dialog-create-error" title="Warning" th:utext="#{eligible.dialog.error}"></div>
+		
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+
+</body>
+</html>

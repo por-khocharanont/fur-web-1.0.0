@@ -1,0 +1,16 @@
+package th.co.ais.mimo.acim.web.service;
+
+import java.util.Map;
+
+import th.co.ais.mimo.acim.web.model.FlowConfig;
+import th.co.ais.mimo.acim.web.model.grid.FlowconfigGridResponse;
+import th.co.ais.mimo.acim.web.service.exception.ServiceException;
+
+public interface FlowConfigService {
+	
+	public FlowconfigGridResponse getSearchFlowconfig(Map<String,String> params) throws ServiceException;
+	
+	public FlowConfig getApplicationById(Integer flowid) throws ServiceException;
+	
+	public void insertFlowConfig(FlowConfig insertForm) throws ServiceException;
+}

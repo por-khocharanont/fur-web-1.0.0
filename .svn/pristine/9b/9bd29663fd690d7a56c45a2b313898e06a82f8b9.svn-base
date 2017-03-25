@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>UserRequest</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:inline="javascript">
+/*<![CDATA[*/
+var listuserfirst = [[${listuser}]];
+var nameuser = [[${name}]];
+
+//Parameter from UserProfile
+var type = [[${type}]];
+var flagUserprofile = [[${flagUserprofile}]];
+var recordDataProfile = [[${recordDataProfile}]];
+/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/res/js/views/userrequest/userrequest.js}">
+</script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="formUserrequest">
+			<!-- USER_REQUEST_PANEL -->
+			<h1 class="font-label-title">User Request<font color="red"> *</font></h1>
+			<hr class="hr-line">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="col-md-3 control-label" th:utext="|#{userrequest.label.usertype} <font color='red' size='4px'> *</font>|">
+					</label>
+					<div class="col-md-3">
+						<select id="usertype" name="usertype" class="form-control">
+							<option value="1" selected="selected" >Application</option>
+							<option value="6">Telecom</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label" th:utext="|#{userrequest.label.requestuser} <font color='red' size='4px'> *</font>|" ></label>
+					<div class="col-md-6">
+						<label class="radio-inline "><input type="radio" name="requestBy" checked value="1" >Individual</label>
+						<label class="radio-inline "><input type="radio" name="requestBy" value="2" >Group User</label>
+						<input type="hidden" id="requestBy-previous" value="1" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label" th:utext="|#{userrequest.label.userrequestname}|"></label>
+					<div class="col-md-6" style="margin-top: 8px;">
+						<span class="form-control-static " th:text="${name}"></span>&nbsp
+						<input type="hidden" name="userId">
+					</div>
+				</div>
+				<div class="radioRequestBy form-group">
+					<label class="col-md-3 control-label" th:utext="|#{userrequest.label.template}|"></label>
+					<div class="col-md-6">
+					<a class="btn btn-green" href="appTemplate?fileName=template-userrequest.xlsx&filePath=ur/usergroup/" target="_blank">Download</a>
+					</div>
+				</div>
+				<div class="radioRequestBy form-group">
+				    <label class="col-md-3 control-label" for="Uploadfile" th:utext="|#{userrequest.label.attachfile} <font color='red' size='4px'> *</font>|"></label>
+				    <div class="col-md-3">
+				   		<input type="hidden" name="fileTotal" th:value="0" />
+						<div name="browseBtn" class="buttonupload btn btn-green">
+							<span>Browse</span> 
+							<input type="file" class="btn upload" maxlength="1" accept="xls|xlsx" id="fileUpload" name="fileUpload" th:url="@{/userrequest/uploadTemplateFile}" />
+						</div>
+						<div id="fileTemplateList"></div>
+				    </div>
+				  <!--   <input  type="file" name="groupfile" class="col-md-5 form-control-file" th:url="@{/userrequest/uploadTemplateFile}" />   -->
+				</div>
+				<div class="errordif row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-3 control-label">Error</label>
+							<p class="errordif col-md-6" style="margin-top: 6px; color:red;"></p>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-md-10">
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<table id="errorUserjqGrid"></table>
+			    			<div id="errorUserGridPager"></div>
+			    			<br>
+		    			</div>
+		    			<div class="col-md-1"></div>
+					</div>
+	    			<div class="col-md-1"></div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label" th:utext="|#{userrequest.label.requesttype} <font color='red' size='4px'> *</font>|"></label>
+					<div class="col-md-6">
+						<label class="radio-inline "><input type="radio" name="requestType" value="1" checked>New</label>
+						<label class="radio-inline "><input type="radio" name="requestType" value="2">Terminate</label>
+						<label class="radio-inline requestTypeChange"><input type="radio" name="requestType" value="3">Change</label>
+						 <input type="hidden" id="requestType-previous" value="1" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label" th:utext="|#{userrequest.label.subject} <font color='red' size='4px'> *</font>|"></label>
+					<div class="col-md-5">
+						<input type="text" class="form-control" id="subject" name="subject" maxlength="250" ></input>
+						<span style="display:none;" class="font-label-error" name="txMsgSubject"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-3 control-label" for="detail" th:utext="|#{userrequest.label.detail}|">Detail</label>
+					<div class="col-md-5">
+						<textarea cols="65" rows="4" id="detail" name="detail"></textarea>
+					</div>
+				</div>
+			</form>
+			
+			<!-- USER_LIST_PANEL -->
+			<h1 class="font-label-title" th:utext="|#{userrequest.label.userlist}<font color='red'> *</font>|"></h1>
+			<hr class="hr-line">
+			<div class="col-md-12 userjqGrid">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<table id="userjqGrid"></table>
+						<div id="userjqGridPager" style="display: none;"></div>
+					</div>
+				</div>
+				<div class="col-md-3"></div>
+			</div>
+			<div class="col-md-12 text-center emptyUserList" style="display: none;" th:utext="|#{userrequest.label.emptyUserList}|">
+			</div>
+			
+			<div class="accUr row">
+				<h1 class="font-label-title">ACC</h1>
+				<hr class="hr-line">
+			</div>
+			
+			<div class="appUr row">
+				<div class="col-md-12">
+					<div class="pull-left">
+						<span class="font-label-title h1" th:utext="|#{userrequest.title.application}<font color='red'> *</font>|"></span>
+					</div>
+					<div class="pull-right">
+						<button name="btnAddAppl" class="btn btn-green btn-lg-w1">Add</button>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<hr class="hr-line">
+					<form id="previewform" class="form-horizontal" th:action="@{/userrequest/individual/PrePareData}" >
+						<div class="form-group" name="appNew" style="display: none;">
+									<label class="col-md-3 control-label" th:utext="|#{userrequest.label.period}<font color='red' size='4px'> *</font>|"></label>
+									<div class="col-md-6">
+										<div class="col-md-12">
+											<label class="radio-inline"><input type="radio" name="period" value="1" checked  th:utext="|#{userrequest.value.period.1}|"></label>
+											<label class="radio-inline"><input type="radio" name="period" value="2" th:utext="|#{userrequest.value.period.2}|"></label>
+										</div>
+										<div class="userDatepicker col-md-12">
+										
+											<span class="detail-head"> Start <input type="text" id="dteStart" style="background-color: white; width: 20%;" name="startDate" readonly="true" /> </span>
+											<span class="detail-head"> To <input style="margin-top:5px; background-color: white; width: 20%;" type="text" id="dteTo" name="endDate" readonly='true' /></span>
+										</div>
+									</div>
+						</div>
+						<div class="form-group" name="appChange" style="display: none;">
+									<div class="col-md-12">
+										<div class="checkbox">
+										    <label>
+										      <input type="checkbox" name="appChangeChk"> Change period of time
+										    </label>
+										 </div>
+									</div>
+									 <div name="appChangePeriod" class="col-md-12">
+									 	 <label class="col-md-3 control-label" th:utext="|#{userrequest.label.period}<font color='red' size='4px'> *</font>|"></label>
+										 <div class="col-md-6">
+											<div class="col-md-12">
+												<label class="radio-inline"><input type="radio" name="periodChg" value="1" th:utext="|#{userrequest.value.period.1}|"></label>
+												<label class="radio-inline"><input type="radio" name="periodChg" value="2" th:utext="|#{userrequest.value.period.2}|"></label>
+											</div>
+											<div class="userDatepickerChg col-md-12" style="display:none;">
+												<span class="detail-head"> Start <input type="text" id="dteStartChg" style="background-color: white; width: 20%;" name="startDateChg" readonly="true" /> </span>
+												<span class=" detail-head "> To <input style="margin-top:5px; background-color: white; width: 20%;" type="text" id="dteToChg" name="endDateChg" readonly='true' /></span>
+											</div>
+										</div>
+									 </div>
+						</div>
+						<div class="form-group">
+								<div class="col-md-12 data-table" name="appNew" id="appNewPanel" style="display: none;">
+										<table id="appjqGrid"></table>
+								</div>
+								<div class="col-md-12 data-table" name="appChange" style="display: none;">
+										<table id="appChangejqGrid"></table>
+								</div>
+								<div class="col-md-12 data-table" name="appTerminate" style="display: none;">
+											<table id="appTerminatejqGrid"></table>
+								</div>
+								<div class="col-md-12 text-center empty" th:utext="|#{report.label.empty}|">
+								</div>
+								<div class="col-md-12">
+									<br>
+									<hr>
+								</div>
+						</div>
+						<div class="col-md-12 text-center">
+							<button name="submitAppJqgrid" type="submit" class="btn btn-green btn-lg-w1">Preview</button>
+							<a  class="btn btn-grey btn-lg-w1" th:href="@{/userrequest/individual}" >Reset</a> 
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div class="previewPage">
+			<form id="submitform" class="form-horizontal" th:action="@{/userrequest/individual/submitData(${_csrf.parameterName}=${_csrf.token})}" method="POST">
+				<div class="row" >
+						<div class="col-md-12">
+							<h1 class="font-label-title" th:utext="|#{userrequest.title.userrequest}|"></h1>
+							<hr class="hr-line">
+							<div class="form-group" >
+										<label class="col-md-3 control-label">UR Type</label>
+										<div class="col-md-6" style="margin-top: 8px;">
+											<span class="form-control-static" name="preUsertype" ></span>
+										</div>
+							</div>
+							<div class="form-group">
+										<label class="col-md-3 control-label" >Request User</label>
+										<div class="col-md-6" style="margin-top: 8px;">
+											<span class="form-control-static" name="preRequestBy" ></span>
+										</div>
+							</div>
+							<div class="form-group">
+										<label class="col-md-3 control-label">User Request Name</label>
+										<div class="col-md-6" style="margin-top: 8px;">
+											<span class="form-control-static" th:text="${name}"></span>
+										</div>
+							</div>
+							<div class="form-group">
+										<label class="col-md-3 control-label">Request Type</label>
+										<div class="col-md-6" style="padding-top: 5px;">
+											<span class="form-control-static" name="preRequestType"></span>
+										</div>
+													
+							</div>
+							<div class="form-group">
+										<label class="col-md-3 control-label">Subject</label>
+										<div class="col-md-6" style="padding-top: 8px;">
+											<span class="form-control-static" name="preSubject" ></span>
+										</div>
+							</div>
+							<div class="form-group">
+								  <label class="col-md-3 control-label" for="detail">Detail</label>
+								  <div class="col-md-6" style="padding-top: 8px;">
+								 	 <span class="form-control-static" name="preDetail"  ></span>
+								  </div>
+							</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<h1 class="font-label-title">User List</h1>
+						<hr class="hr-line">
+						<div class="col-md-3"></div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<table id="preUserjqGrid"></table>
+								<div id="preUserjqGridPager" style="display: none;"></div>
+							</div>
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<h1 class="font-label-title">Application</h1>
+						<hr class="hr-line">
+						<div class="form-group" name="previewPeriod" style="display: none;">
+									<label class="col-md-3 control-label">Period</label>
+									<div class="col-md-6">
+										<p class="form-control-static" name="period"></p>
+										<font color="black" name="start" style="">Start &nbsp;</font>
+										<span class="form-control-static" name="dteStart"></span>
+										<font color="black" name="to" style="">&nbsp; To &nbsp;</font>
+										<span class="form-control-static" name="dteTo"></span> 
+									</div>
+						</div>
+						<div class="form-group">
+							<div name="preAppGridNew" class="col-md-12">
+								<div name="preAppGridNew" class="col-md-12 data-table">
+									<table id="preAppjqGrid"></table>
+								</div>
+							</div>
+							<div name="preAppGridChg" class="col-md-12">
+								<div name="preAppGridChg" class="col-md-12 data-table">
+									<table id="preAppChangejqGrid"></table>
+								</div>
+							</div>
+							<div name="preAppGridTer" class="col-md-12">
+								<div name="preAppGridTer" class="col-md-12 data-table">
+										<table id="preAppTerjqGrid"></table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row" name="divremark">
+					<div class="col-md-12">
+						<h1 class="font-label-title"> UR Remark</h1>
+						<hr class="hr-line">
+						<div class="col-md-12">
+							<span name="alertErrorUser" class="form-control-static" style="color: red;"></span>
+						</div>
+						<div class="col-md-12"><BR></div>
+						<div class="col-md-12">
+							<textarea name="urremark" rows="7" cols="80" readonly="readonly" disabled="disabled" style="overflow-y: scroll; resize: none; background:white;"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 text-center">
+								<BR>
+								<button name="preSubmitAppJqgrid" type="submit" class="btn btn-green btn-lg-w1" style="margin-left: 5px;">Submit</button> 
+								<button type="button" name="backPreview" class="btn btn-grey btn-lg-w1" >Back</button> 
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div id="addAplicationStd" title="Add Standard Application">
+			<div class="col-md-1"></div>
+			<div class="col-md-10 text-center">
+				<form  class="form-horizontal" name="addApplform" id="addApplform">
+					<div class="form-group">
+								<br>
+								<label class="col-md-4 control-label">Standard Application
+										<i class="tooltip-pic" data-toggle="tooltip" 
+											title="Standard Application คือ Application ที่ user มีสิทธิ์ขอใช้งาน หากต้องการขอ Application อื่นๆ ต้องขอใช้งานแบบ Special Application กรณีไม่ทราบ Role Application ที่ต้องการ กรุณาเลือก Default">
+										</i>
+								</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="stdApp" name="stdApp" th:action="@{/userrequest/listAppStdEligibleByAppname}" />
+								</div>
+					</div>
+					<div class="form-group text-center">
+						<button type="button" name="btnSerachAppStd" class="btn btn-green btn-lg-w1" style="margin-left: 5px;" th:action="@{/userrequest/listAppEligibleStdGridByAppName}" >Search</button>
+						<button type="button" class="btn btn-grey btn-lg-w1" onclick="$('#stdApp').val('');">Reset</button> 
+					</div>
+					<div class="form-group">
+						<div class="pull-right">
+							<button name="btnspecial" class="btn btn-red" style=" margin-right: 15px;">Special Application</button>
+						</div>
+					</div>
+					</form>
+					<div class="form-group addAppStdjqGrid">
+							<table id="addAppStdjqGrid"></table>
+			    			<div id="addAppStdGridPager"></div>
+			    			<a id="editUrl" style="display:none;">editUrl</a>
+					</div>
+					<div class="form-group text-center emptyaddAppStdjqGrid">
+										ไม่พบข้อมูล Application<BR>
+					</div>
+				
+			</div>
+			<div class="col-md-1"></div>
+			
+		</div>
+		<div id="addAplicationSpecail" title="Add Special Application">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<form  class="form-horizontal" name="addAppSpcform" id="addAppSpcform">
+					<br>
+					<div class="form-group">
+								<label class="col-md-4 control-label">Special Application
+										<i class="tooltip-pic" data-toggle="tooltip" 
+											title="Special Application คือ Application ทั้งหมดของระบบ ACIM ที่ user สามารถทำการขอ UR ได้ ถ้าเป็น Application ที่นอกเหนือจาก Standard Application จะต้องขออนุญาตจาก App Owner จึงจะใช้งาน Application ได้">
+										</i>
+								</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="spcialApp" name="spcialApp" th:action="@{/userrequest/listAppSpcEligibleByAppname}"></input>
+								</div>
+					</div>
+<!-- 					<div name="divroleappspc" style="display:none;" >
+						<div class="form-group">
+									<label class="col-md-4 control-label">Role Application</label>
+									<div class="col-md-6" style="margin-top: 8px;">
+										<select id="roleappspc" name="roleappspc" class="input-select" th:action="@{/userrequest/individual/getEligibleListSpcDropdownByAppId}">
+											<option value=""  class="optionnull text-center">-------กรุณาเลือก------</option>
+										</select>
+									</div>
+						</div>
+					</div> -->
+					<div class="form-group text-center">
+							<button name="btnSerachAppSpc" type="button" class="btn btn-green btn-lg-w1" th:action="@{/userrequest/listAppSpcGridEligibleByAppName}">Search</button> 
+							<button type="button" class="btn btn-grey btn-lg-w1" onclick="$('#spcialApp').val('');" >Reset</button> 
+					</div>
+					<div class="form-group">
+						<div class="pull-right">
+							<button type="button" name="btnstandard" class="btn btn-grey btn-lg-w1" style=" margin-right: 15px;">Back</button>
+						</div>
+					</div>
+					</form>
+					<div class="form-group addAppSpecialjqGrid">
+						<table id="addAppSpecialjqGrid"></table>
+		    			<div id="addAppSpecialGridPager"></div>
+		    			<!-- <a id="editUrl" style="display:none;">editUrl</a> -->
+					</div>
+					<div class="form-group text-center emptyaddAppSpecialjqGrid">
+						ไม่พบข้อมูล Application<BR>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+		<div id="changeAppDialog" title="Change Application">
+			<div class="col-md-1"></div>
+			<div class="col-md-10"> 
+				<form  class="form-horizontal" name="changeAppform" id="changeAppform">
+					<br>
+					<div class="form-group">
+								<label class="col-md-4 control-label">Application 
+									<i class="tooltip-pic" data-toggle="tooltip" 
+												title="Application คือ Application ที่ User มีสิทธิ์ใช้งาน สามารถทำการขอเปลี่ยนแปลงสิทธิ์การใช้งานได้ทั้ง Role Application และ Period ของ Application">
+									</i>
+								</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="changeApptxt" name="changeApptxt" th:action="@{/userrequest/individual/listAppChangeByappName}"></input>
+								</div>
+					</div>
+					<!-- <div class="form-group" style="display:none;">
+								<label class="col-md-4 control-label">Role Application</label>
+								<div class="col-md-6" style="margin-top: 8px;">
+									<select id="changeApp" name="changeApp" class="input-select">
+										<option value=""  class="text-center">-------กรุณาเลือก------</option>
+									</select>
+								</div>
+					</div> -->
+					<div class="form-group text-center">
+							<div class="col-md-12">
+								<button name="chgAddappbtn" type="button" class="btn btn-green btn-lg-w1" style="margin-left: 5px;" th:action="@{/userrequest/individual/listAppChangeGridByappName}" >Search</button> 
+								<button type="button" class="btn btn-grey btn-lg-w1" onclick="$('#changeApptxt').val('');"  >Reset</button>
+							</div>
+					</div>
+					<div class="form-group changeAppjqGrid">
+									<table id="changeAppjqGrid"></table>
+					    			<div id="changeAppjqGridPager"></div>
+					    			<!-- <a id="editUrl" style="display:none;">editUrl</a> -->
+					</div>
+					<div class="form-group text-center emptychangeAppjqGrid">
+						ไม่พบข้อมูล Application<BR>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-1"></div>
+			
+		</div>
+		
+		<div id="terminalAppDialog" title="Terminate Application">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<form  class="form-horizontal" name="terminalform" id="terminalform">
+						<br>
+						<div class="form-group">
+									<label class="col-md-4 control-label">Application
+									<i class="tooltip-pic" data-toggle="tooltip" 
+												title="Application คือ Application ทั้งหมดของระบบ ACIM รองรับกรณี Group User สามารถทำการขอ UR ได้เพื่อลบสิทธิ์การใช้งานได้ของ Application หากต้องการ Terminate Application ที่ User มีสิทธิ์การใช้งานได้ที่ User Authorization">
+									</i>
+									</label>
+									<div class="col-md-6">
+										<input type="text" class="form-control" id="terminaltxtApp" name="terminaltxtApp" th:action="@{/userrequest/individual/listAppByappNameAndType}"></input>
+									</div>
+						</div>
+						<div class="form-group" style="display:none;">
+									<label class="col-md-4 control-label">Role Application</label>
+									<div class="col-md-6" style="margin-top: 8px;">
+										<select id="terrol" name="terrol" class="input-select">
+											<option value=""  class="text-center">-------กรุณาเลือก------</option>
+										</select>
+									</div>
+						</div>
+						<div class="form-group text-center">
+								<button name="terSerachGridAppbtn" class="btn btn-green btn-lg-w1" type="button" style="margin-left: 5px;" th:action="@{/userrequest/individual/listAppRoleGridByappNameAndType}" >Search</button> 
+								<button class="btn btn-grey btn-lg-w1" type="button" onclick="$('#terminaltxtApp').val('');">Reset</button> 
+						</div>
+						<div class="form-group">
+							<div class="pull-right">
+								<button type="button" name="btnUserAuthorizeTerminate" class="btn btn-green btn-lg-w1" >User Authorization </button>
+							</div>
+						</div>
+						<div class="form-group terminaljqGrid">
+							<table id="terminaljqGrid"></table>
+			    			<div id="terminalGridPager"></div>
+			    			<!-- <a id="editUrl" style="display:none;">editUrl</a> -->
+						</div>
+						<div class="form-group text-center emptyterminaljqGrid">
+							ไม่พบข้อมูล Application<BR>
+						</div>
+					</form>
+					
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+		<div id="terUserAuthorAppDialog" title="Terminate Application">
+			<div class="col-md-1"></div>
+			<div class="col-md-10"> 
+				<form  class="form-horizontal" name="userAuthorChangeAppform" id="userAuthorChangeAppform">
+					<br>
+					<div class="form-group">
+								<label class="col-md-4 control-label">Application 
+									<i class="tooltip-pic" data-toggle="tooltip" 
+												title="Application คือ Application ที่ User มีสิทธิ์ใช้งาน สามารถทำการลบสิทธิ์การใช้งานได้ของ Application">
+									</i>
+								</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control" id="userAuthorChangeApptxt" name="userAuthorChangeApptxt" th:action="@{/userrequest/individual/listAppChangeByappName}"></input>
+								</div>
+					</div>
+					<div class="form-group text-center">
+							<div class="col-md-12">
+								<button name="userAuthorChgAddappbtn" type="button" class="btn btn-green btn-lg-w1" style="margin-left: 5px;" th:action="@{/userrequest/listApp/terauthor/gridByappName}" >Search</button> 
+								<button type="button" class="btn btn-grey btn-lg-w1" onclick="$('#userAuthorChangeApptxt').val('');"  >Reset</button>
+							</div>
+					</div>
+					<div class="form-group">
+						<div class="pull-right">
+							<button class="btn btn-grey btn-lg-w1" name="backUserAuthorizeTerminate" type="button">Back</button>
+						</div>
+					</div>
+					<div class="form-group userAuthorChangeAppjqGrid">
+									<table id="userAuthorChangeAppjqGrid"></table>
+					    			<div id="userAuthorChangeAppjqGridPager"></div>
+					    			<!-- <a id="editUrl" style="display:none;">editUrl</a> -->
+					</div>
+					<div class="form-group text-center userAuthorEmptryChangeAppjqGrid">
+						ไม่พบข้อมูล Application<BR>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-1"></div>
+			
+		</div>
+		<div id="selectNewAppDialog" title="Select Application">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<form  class="form-horizontal" >
+						<div class="form-group">
+									<br>
+									<label class="col-md-4 control-label">Application</label>
+									<div class="col-md-6">
+										<p  class="form-control-static" name="confirTxtApp"></p>
+									</div>
+						</div>
+						<div class="form-group">
+									<label class="col-md-4 control-label">Role Application</label>
+									<div class="col-md-6">
+										<p  class="form-control-static"  name="rolconfirApp"></p>
+									</div>
+						</div>
+						<div class="form-group">
+									<label class="col-md-4 control-label">Remark</label>
+									<div class="col-md-6">
+										<textarea id="remarkConfirm" name="remarkConfirm" class="form-control" rows="4">
+										</textarea>
+									</div>
+						</div>
+						<div class="form-group">
+									<label class="col-md-4 control-label"></label>
+									<div class="col-md-6">
+										<span class="form-control-static" name="requestToken" style="display:none;">
+											Application นี้ต้องใช้ USB Token ในการเข้าระบบ หากผู้ใช้งานยังไม่มี USB Token 
+											ระบบจะทำการขอให้อัตโนมัติ เมื่อ UR ดำเนินการเรียบร้อยแล้ว ให้ติดต่อรับ  USB Token ภายใน 7 วัน ที่ทีม 
+											AAM ตึก  AIS Tower ชั้น 11 ส่วนหลัง ถ้าพ้นกำหนดจะต้องขอ USB Token ใหม่
+										</span>
+									</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-12 text-center">
+								<button name="btnAddRole" type="button" class="btn btn-green btn-lg-w1" style="margin-left: 5px;">Submit</button> 
+								<button class="btn btn-grey btn-lg-w1" type="button" onclick='$("#selectNewAppDialog").dialog("close");$("#addAplicationStd").dialog("open");' >Back</button>
+								<input name="hidappRoleId" type="hidden" />
+								<input name="hidappId" type="hidden" />
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+		<div id="selectChgAppDialog" title="Select Application">
+			<div class="col-md-1"></div>
+			<div class="col-md-10">
+				<form  class="form-horizontal">
+					<div class="form-group">
+								<label class="col-md-4 control-label">Application</label>
+								<div class="col-md-6">
+									<p  class="form-control-static"  name="chgConfirTxtApp"></p>
+								</div>
+					</div>
+					<div class="form-group">
+								<label class="col-md-4 control-label">Role Application</label>
+								<div class="col-md-6">
+									<p  class="form-control-static"  name="chgRolconfirApp"></p>
+								</div>
+					</div>
+					<div class="form-group" >
+							<div class="form-group">
+								<label class="col-md-4 "></label>
+								<div class="col-md-6">
+										<input type="checkbox" name="chgAppConfirChkbox"> New Role Application
+								</div>
+							</div>
+					</div>
+					<div class="form-group" name="chgAppConfirCombobox" style="display:none;">
+						<label class="col-md-4 text-right">New Role Application</label>
+						<div class="col-md-6">
+							<select name="appRoleNewChg" class="form-control col-md-12" th:action="@{/userrequest/listRoleChgAppElm}" >
+								<option selected="selected" value="" class="text-center">Select New Role Application</option>
+							</select>
+							<!-- <span name="chgAppConfirTxt" style="display:none;" >not found data application for change</span> -->
+						</div>
+					</div>
+					<div class="form-group">
+								<label class="col-md-4 control-label">Remark</label>
+								<div class="col-md-6" style="margin-top: 8px;">
+									<textarea name="chgRemarkConfirm" class="form-control" rows="4">
+									</textarea>
+								</div>
+					</div>
+					<div class="form-group text-center">
+							<span name="chgAppErrorTxt" style="display: none; color: red;" ></span>
+					</div>
+					<div class="form-group text-center">
+							<button name="chgBtnAddRole" type="button" class="btn btn-green btn-lg-w1" style="margin-left: 5px;">Submit</button> 
+							<button class="btn btn-grey btn-lg-w1" type="button" onclick='$("#selectChgAppDialog").dialog("close");$("#changeAppDialog").dialog("open");'>Back</button>
+							<input name="chgHidappRoleId" type="hidden" />
+							<input name="chgHidappId" type="hidden" />
+					</div>
+				</form>
+			</div>
+			<div class="col-md-1"></div>
+		</div>
+		
+		<div id="selectTerAppDialog" title="Select Application">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<form  class="form-horizontal" >
+						<div class="form-group">
+									<label class="col-md-4 control-label">Application</label>
+									<div class="col-md-6">
+										<p  class="form-control-static"  name="confirTxtAppTer"></p>
+									</div>
+						</div>
+						<div class="form-group">
+									<label class="col-md-4 control-label">Role Application</label>
+									<div class="col-md-6">
+										<p  class="form-control-static"  name="rolconfirAppTer"></p>
+									</div>
+						</div>
+						<div class="form-group">
+									<label class="col-md-4 control-label">Remark</label>
+									<div class="col-md-6" style="margin-top: 8px;">
+										<textarea name="remarkConfirmTer" class="form-control" rows="4">
+										</textarea>
+									</div>
+						</div>
+						<div class="form-group text-center">
+								<button name="terBtnAddRole" type="button" class="btn btn-green btn-lg-w1" style="margin-left: 5px;">Submit</button> 
+								<button type="button" class="btn btn-grey btn-lg-w1" name="terBackBtnAddRole" onclick='$("#selectTerAppDialog").dialog("close");$("#terminalAppDialog").dialog("open");'>Back</button>
+								<input name="terHidappRoleId" type="hidden" />
+								<input name="terHidappId" type="hidden" />
+						</div>
+					</form>
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+		<div id="dialog-create-confirm" class="dialog" title="Confirmation">คุณต้องการทำรายการใช่หรือไม่ </div>
+		<div id="dialog-new-confirm" class="dialog" title="Confirmation">คุณต้องการลบรายการใช่หรือไม่ </div>
+		<div id="dialog-ter-confirm" class="dialog" title="Confirmation">คุณต้องการลบรายการใช่หรือไม่ </div>
+		<div id="dialog-chg-confirm" class="dialog" title="Confirmation">คุณต้องการลบรายการใช่หรือไม่ </div>
+		<div id="dialog-warning" class="dialog" title="Warning"></div>
+	</section>
+	<footer class="footer " layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

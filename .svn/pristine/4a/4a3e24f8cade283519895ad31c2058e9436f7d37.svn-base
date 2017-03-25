@@ -1,0 +1,25 @@
+package th.co.ais.mimo.acim.web.model;
+
+import java.util.List;
+
+public class URStepDetail extends UrStep {
+	private List<UrStepApprove> urStepApproveList;
+	private List<UrApproveHistory> urApproveHistoryList;
+
+	public List<UrStepApprove> getUrStepApproveList() {
+		return urStepApproveList;
+	}
+
+	public void setUrStepApproveList(List<UrStepApprove> urStepApproveList) {
+		this.urStepApproveList = urStepApproveList;
+	}
+
+	public List<UrApproveHistory> getUrApproveHistoryList() {
+		return urApproveHistoryList;
+	}
+
+	public void setUrApproveHistoryList(List<UrApproveHistory> urApproveHistoryList) {
+		this.urApproveHistoryList = urApproveHistoryList;
+	}
+
+}

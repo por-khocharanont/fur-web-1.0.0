@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Login</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-control" content="no-cache" />
+<meta http-equiv="expires" content="-1" />
+<meta http-equiv="pragma" content="no-cache" />
+
+<script th:inline="javascript">             
+  	$(document).ready(function(){  	
+  		
+		$("#frmLogin").submit(function(){
+			$("#txMsg2").hide();
+			if(($("#username").val() == "") || ($("#password").val() == "")){
+				
+				$("#txMsg").show();
+				return false;
+				
+			}
+		});    
+	});   
+  	
+   </script>
+   
+</head>
+<body>
+	<header class="header hide" layout:fragment="header">
+	</header>
+	<div class="login-panel" layout:fragment="content">
+		<div class="content-header">
+			<img th:src="@{/res/img/image_login/bg_head.png}" />
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="login-left-panel">
+					<div class="left-logo-header text-center">
+						<img th:src="@{/res/img/icon/logo-new.png}" />
+					</div>
+					<div class="left-body-top">
+						<p th:utext="#{login.announce.top}"></p>
+					</div>
+					<div class="left-body-bottom">
+						<p th:utext="#{login.announce.bottom}"></p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<form id="frmLogin" class="form-horizontal form-login login-right-panel" method="POST"
+					enctype="application/x-www-form-urlencoded" 
+					th:action="@{/auth(${_csrf.parameterName}=${_csrf.token})}" 
+					>
+					<div class="text-center logo-header">
+						<i class="logo-login"></i>
+					</div>
+					<div class="logo-login-bg">
+						<div class="form-group input-group">
+							<span class="input-group-addon"> 
+							<span class="icon-user-ais"></span>
+							</span> 
+							<input type="text" class="form-control" placeholder="Username"
+								id="username" name="username" autocomplete="off">
+						</div>
+						<div class="form-group input-group">
+							<span class="input-group-addon"> 
+							<span class="icon-pass-ais"></span>
+							</span> <input type="password" class="form-control"
+								placeholder="Password" id="password" name="password"
+								autocomplete="off">
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-brown btn-block btn-lg">Login</button>
+						</div>
+					</div>
+
+					<div class="error font-red" style="display: none;" id="txMsg" th:utext="#{login.error.10001}"></div>
+					<div id="txMsg2" th:if="${errorMessage}" class="error font-red"
+						th:text="${errorMessage}">Error Message</div>
+				</form>
+				<div class="col-md-6"></div>
+				<div class="col-md-6 help-btn">
+					<button type="button" class="btn btn-default">
+						<span aria-hidden="true"></span>
+						คุ่มือการใช้งาน
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="content-footer">
+<!-- 			<img th:src="@{/res/img/image_login/footer_login.png}" /> -->
+		</div>
+	</div>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+	
+</body>
+</html>

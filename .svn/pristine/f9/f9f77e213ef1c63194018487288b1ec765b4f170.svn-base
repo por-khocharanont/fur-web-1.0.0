@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Report</title>
+<script type="text/javascript" th:src="@{/res/js/views/report/report.eligible.js}" > 
+</script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="navigation navi-left">
+					<ul>
+						<img th:src="@{/res/img/icon/user_request_inactive.png}" height="42" width="42">
+						<B th:utext="#{report.label.title}"></B>
+						<li>
+							<a th:href="@{/report}" th:utext="#{report.hnavbar.application}" ></a>
+						</li>
+						<li>
+							<a th:href="@{/report/eligible}" th:utext="#{report.hnavbar.eligible}" class ="link-active"></a>
+						</li>
+						<li>
+							<a th:href="@{/report/ur}" th:utext="#{report.hnavbar.searchur}"></a>
+						</li>
+					</ul>
+					<br>
+				</div>
+				<div class="col-md-12">
+					<h1 class="font-label-title" th:utext="#{report.label.title}"></h1>
+					<hr class="hr-line">
+					<form id="formReportEligible" method="POST" class="form-horizontal" th:action="@{/report/serach/eligiblelist}" >
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label">Organization Code</label>
+								<div class="col-md-5">
+									<input type="text" maxlength="100" class="form-control auto-orgCode" name="orgCode" th:action="@{/report/eligible/autocomplete/orgcode}" />
+								</div>
+								
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" >Organization Name</label>
+								<div class="col-md-5">
+									<input type="text" maxlength="100"  class="form-control auto-orgDesc" name="orgDesc" th:action="@{/report/eligible/autocomplete/orgdesc}" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" >Application</label>
+								<div class="col-md-5">
+									<input type="text" maxlength="100"  class="form-control auto-appName" name="appName" th:action="@{/report/applications/autocomplete/appname}" /> 
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label">Type</label>
+								<div class="col-md-5">
+									<select class="form-control" name ="type">
+										<option value="" selected>All</option>
+										<option value="1">Application</option>
+										<option value="2">Telecom</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="btn-panel col-md-12 text-center">
+									<button type="submit" class="btn btn-green btn-lg-w1" id="searchBtn">Search</button>
+									<button type="reset" class="btn btn-grey btn-lg-w1">Reset</button>
+								</div>
+							</div>	
+						</div>
+						<div class="col-md-1"></div>
+						
+						<div class="col-md-12 ">
+							<div class="pull-right">
+								<button type="button" class="btn btn-green btn-lg-w1 empty" id="export">Export</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-12 data-table tableReportEligible">
+										<table id="tableReportEligible"></table>
+										<div id="tableReportEligiblePager"></div>
+							</div>
+							<div class="col-md-12 text-center empty" th:utext="|#{report.label.empty}|">
+							</div>
+						</div>
+					</form>
+					<form id="exportReportData" method="POST" class="form-horizontal" th:action="@{/report/export/eligibleDefault}" >
+						<input name="jsonData" type="hidden"/>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

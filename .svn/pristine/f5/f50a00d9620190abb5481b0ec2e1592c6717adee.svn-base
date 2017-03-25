@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Profile</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" th:src="@{/res/js/views/userprofile/profile.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="col-md-12">
+				<h1 class="font-label-title" th:utext="#{userprofile.label.userprofile}"></h1>
+				<hr class="hr-line">
+				<div class="row">
+					<form class="from-horizontal">
+						<div class="col-md-6">
+							<div class="row">
+								<label class="col-md-4 col-md-offset-1 control-label font-label" th:utext="#{userprofile.label.username}"></label>
+								<div class="col-md-7">
+									<span class="form-control-static"
+										th:text="${userProfile.username}">username</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-4 col-md-offset-1 control-label" th:utext="#{userprofile.label.name}"></label>
+								<div class="col-md-7">
+									<span class="form-control-static"
+										th:text="${userProfile.enfullname}+'('+${userProfile.thname}+' '+${userProfile.thsurname}+')'">name</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-4 col-md-offset-1 control-label" th:utext="#{userprofile.label.email}"></label>
+								<div class="col-md-7">
+									<span class="form-control-static"
+										th:text="${userProfile.email==''?'-':userProfile.email}">email</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-4 col-md-offset-1 control-label" th:utext="#{userprofile.label.function}"></label>
+								<div class="col-md-7">
+									<span class="form-control-static"
+										th:text="${userProfile.fccode==''?'-':userProfile.fccode}
+										+' '+${userProfile.fcname==''?'':userProfile.fcname}
+										+' '+${userProfile.fcdesc==''?'':userProfile.fcdesc}">function</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-4 col-md-offset-1 control-label" th:utext="#{userprofile.label.department}"></label>
+								<div class="col-md-7">
+									<span class="form-control-static"
+										th:text="${userProfile.dpname==''?'-':userProfile.dpname}
+										+' '+${userProfile.dpdesc==''?'':userProfile.dpdesc}">department</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-4 col-md-offset-1 control-label" th:utext="#{userprofile.label.company}"></label>
+								<div class="col-md-7">
+									<span class="form-control-static"
+										th:text="${userProfile.coname==''?'-':userProfile.coname}">coname</span>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="row">
+								<label class="col-md-3 control-label font-label" th:utext="#{userprofile.label.pin}"></label>
+								<div class="col-md-9">
+									<span class="form-control-static"
+										th:text="${userProfile.pincode==''?'-':userProfile.pincode}">pin</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-3 control-label" th:utext="#{userprofile.label.position}"></label>
+								<div class="col-md-9">
+									<span class="form-control-static"
+										th:text="${userProfile.position==''?'-':userProfile.position}">position</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-3 control-label" th:utext="#{userprofile.label.organize}"></label>
+								<div class="col-md-9">
+									<span class="form-control-static"
+										th:text="${userProfile.orgcode==''?'-':userProfile.orgcode}
+										+' '+${userProfile.orgname==''?'':userProfile.orgname}
+										+'('+${userProfile.orgdesc==''?'':userProfile.orgdesc}+')'">organization</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-3 control-label" th:utext="#{userprofile.label.section}"></label>
+								<div class="col-md-9">
+									<span class="form-control-static"
+										th:text="${userProfile.sccode==''?'-':userProfile.sccode}
+										+' '+${userProfile.scname==''?'':userProfile.scname}
+										+' '+${userProfile.scdesc==''?'':userProfile.scdesc}">section</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-3 control-label" th:utext="#{userprofile.label.bu}"></label>
+								<div class="col-md-9">
+									<span class="form-control-static"
+										th:text="${userProfile.buname==''?'-':userProfile.buname}
+										+' '+${userProfile.budesc==''?'':userProfile.budesc}">bu</span>
+								</div>
+							</div>
+							<div class="row">
+								<label class="col-md-3 control-label" th:utext="#{userprofile.label.manager}"> </label>
+								<div class="col-md-9">
+									<span class="form-control-static"
+										th:text="${userProfile.managerEnname==''?'-':userProfile.managerEnname +' '+userProfile.managerEnsurname}">name</span>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h1 class="font-label-title" th:utext="#{userprofile.label.appinfo}"></h1>
+				<hr class="hr-line">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="navigation navi-left">
+							<ul>
+	<!-- 							<img th:src="@{/res/img/icon/admin_inactive.png}" height="42" width="42"> -->
+								<B>Type</B>
+								<li>
+									<a href="" class="nav-menu-bar link-active" value="1">Application(<span 
+										th:text="${applicationCount}">total Application</span>)
+									</a>
+								</li>
+								<li>
+									<a href="" class="nav-menu-bar" value="2" >Telecom(<span
+											th:text="${telecomCount}">total Telecom</span>)
+									</a>
+								</li>
+								<li>
+									<a href="" class="nav-menu-bar" value="3" >Token(<span
+											th:text="${tokenCount}">total Token</span>)
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-md-12">
+							<form class="form-horizontal" id="searchApplicationForm" th:action="@{/users/}" name="searchApplicationForm">
+							<div class="col-md-1"></div>
+							<div class="col-md-10">
+								<div class="form-group" id="appNameInput">
+									<label class="col-md-3 col-md-offset-1 control-label font-label" th:utext="#{userprofile.label.appname}"></label>
+									<div class="col-md-5">
+										<input class="form-control auto-appName"  maxlength="100" id="appName" name="appName" th:action="@{/admin/applications/autocomplete/appname}"></input>
+									</div>
+								</div>
+								<div class="form-group" id="authorizationInput">
+									<label class="col-md-3 col-md-offset-1 control-label font-label" th:utext="#{userprofile.label.auth}"></label>
+									<div class="col-md-5">
+										<label class="radio-inline"> 
+											<input type="radio" name="authorizationType" value="0" checked> All
+										</label> 
+										<label class="radio-inline"> 
+											<input type="radio" name="authorizationType" value="1"> Allowed
+										</label> 
+										<label class="radio-inline"> 
+											<input type="radio" name="authorizationType" value="2"> Not Allowed
+										</label> 
+									</div>
+								</div>
+								<input type="hidden" name="applicationType" value="1" />
+								<div class="form-group">
+									<div class="btn-panel col-md-12 text-center">
+										<button type="button" class="btn btn-green" id="searchBtn">Search</button>
+										<button type="reset" class="btn btn-grey" id="resetBtn">Reset</button>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-1"></div>
+						</form>
+					</div>
+				</div>
+				
+				<div id="detailUrl" th:action="@{/userrequest/ur/detail}"></div>
+				
+				<div id="standardGrid" class="row" >
+					<div class="col-md-12">
+						<div class="font-label-title h1 pull-left">
+							<span class="font-label-sub-title" th:utext="#{userprofile.label.standard}"></span>
+							<i class="tooltip-pic" data-toggle="tooltip" 
+								th:title="#{userprofile.hint.standard}">
+							</i>
+						</div>
+						<div class="action-panel pull-right margin-top-20">
+							<form class="form-horizontal" id="urRequestFrom" method="post" th:action="@{/userrequest/individual/fromprofile/newur}" name="urRequestFrom">	
+								<input type="hidden" name="jsonData"></input>
+								<button type="button" class="btn btn-green" name="requestBtn">Request</button>
+							</form>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div name="dataNotFound" style="text-align: center;">
+							<br>
+							<font th:utext="#{common.data.not.found}"></font>
+							<br>
+					    </div>
+						<div name="dataFound" class="tableGrid" th:action="@{/userrequest/ur/detail}">
+							<table id="standardAppTable"></table>
+							<div id="standardAppTablePager"></div>
+						</div>
+					</div>
+				</div>
+				<div id="specialGrid" class="row">
+					<div class="col-md-12">
+						<div class="font-label-title h1 pull-left">
+							<span class="font-label-sub-title" th:utext="#{userprofile.label.special}"></span>
+							<i class="tooltip-pic" data-toggle="tooltip" 
+								th:title="#{userprofile.hint.special}">
+							</i>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div name="dataNotFound" style="text-align: center;">
+							<br>
+							<font th:utext="#{common.data.not.found}"></font>
+							<br>
+					    </div>
+						<div name="dataFound" class="tableGrid">
+							<table id="specialAppTable"></table>
+							<div id="specialAppTablePager"></div>
+						</div>
+					</div>
+				</div>
+				<div id="tokenGrid" class="row">
+					<div class="col-md-12">
+						<div class="font-label-title h1 pull-left">
+							<span class="font-label-sub-title" th:utext="#{userprofile.label.token}"></span>
+							<i class="tooltip-pic" data-toggle="tooltip" 
+								th:title="#{userprofile.hint.token}">
+							</i>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div name="dataNotFound" style="text-align: center;">
+							<br>
+							<font th:utext="#{common.data.not.found}"></font>
+							<br>
+					    </div>
+						<div name="dataFound" class="tableGrid">
+							<table id="tokenAppTable"></table>
+							<div id="tokenAppTablePager"></div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="col-md-12"><br><br><br></div>
+			<div id="dialog-cannot-request" title="Warning" class="dialog" th:utext="#{userprofile.warning.select}"></div>
+		</div>
+	
+
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

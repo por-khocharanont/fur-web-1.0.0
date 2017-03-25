@@ -1,0 +1,144 @@
+package th.co.ais.mimo.acim.web.aspectj;
+
+import java.io.IOException;
+import java.net.URI;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+
+import th.co.ais.mimo.acim.web.log.LogFormater;
+
+@Aspect
+public class AspectLogger {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AspectLogger.class);
+	
+	private String endPoint;
+	
+	
+	public String getEndPoint() {
+		return endPoint;
+	}
+
+	public void setEndPoint(String endPoint) {
+		this.endPoint = endPoint;
+	}
+
+	@Before("execution(* th.co.ais.mimo.acim.web.controller.*.*(..)) && args(obj,..)")
+    public void logMethodControllerAccessBefore(JoinPoint joinPoint, Object obj) throws IOException {
+		
+		try {
+			
+			setClassNameMethodName(joinPoint);
+			
+			String service = joinPoint.getSignature().getName();
+			
+	    	logger.info(LogFormater.WEB_REQUEST, service, "parameter : " + obj);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    }
+	
+//	@AfterReturning(pointcut="execution(* th.co.ais.mimo.acim.web.controller.*.*(..))", returning="response")
+//    public void logMethodControllerAccessAfter(JoinPoint joinPoint , Object response) throws Exception {
+//				
+//		
+//		try {
+//			
+//			setClassNameMethodName(joinPoint);
+//			
+//			String service = joinPoint.getSignature().getName();
+//			
+//			if(response != null){
+//	    		
+//	    		logger.info(LogFormater.WEB_RESPONSE, service, response);
+//	    	}
+//	    	else{
+//	    		logger.info(LogFormater.WEB_RESPONSE, service, "");
+//	    	}
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//    	
+//    	
+//
+//    }
+	
+//	@Before("execution(* th.co.ais.mimo.acim.web.util.RestUtil.exchange(..)) && args(url, method, requestEntity, responseType)")
+//    public void logMethodRestTemplateAccessBefore(JoinPoint joinPoint,URI url, HttpMethod method, HttpEntity<String> requestEntity, Class<String> responseType) throws IOException {
+//		
+//		try {
+//			
+//			this.endPoint = method +" "+ url.toString();
+//			
+//			String service = joinPoint.getSignature().getName();
+//			HttpHeaders headers = requestEntity.getHeaders();
+//			String body = requestEntity.getBody();
+//			
+//			String logMSG = "URL: "+endPoint+", HEADER:"+headers+", BODY:"+body;
+//			logger.info(LogFormater.API_REQUEST, service, logMSG);
+//			
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//    }
+	
+//	@AfterReturning(pointcut="execution(* th.co.ais.mimo.acim.web.util.RestUtil.exchange(..))", returning="response")
+//    public void logMethodRestTemplateAccessAfter(JoinPoint joinPoint , Object response) throws Exception {
+//				
+//		
+//		try {
+//						
+//			String service = joinPoint.getSignature().getName();
+//			
+//			String endPoint = this.getEndPoint();
+//			
+//			@SuppressWarnings("unchecked")
+//			ResponseEntity<String> responseEntity = (ResponseEntity<String>) response;
+//			
+//			HttpHeaders headers = responseEntity.getHeaders();
+//			String body = responseEntity.getBody();
+//			
+//			String logMSG = "URL: "+endPoint+", HEADER:"+headers+", BODY:"+body;
+//			
+//			logger.info(LogFormater.API_RESPONSE, service, logMSG);
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//    	
+//    	
+//
+//    }
+	
+	public void setClassNameMethodName(JoinPoint joinPoint) throws Exception {
+		
+		String className = joinPoint.getTarget().getClass().getName();
+    	String service = joinPoint.getSignature().getName();
+    	
+    	MDC.put("className", className);
+		MDC.put("methodName", service);
+		
+	}
+
+}

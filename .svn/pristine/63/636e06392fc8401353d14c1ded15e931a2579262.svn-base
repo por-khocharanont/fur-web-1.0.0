@@ -1,0 +1,7 @@
+package th.co.ais.mimo.acim.web.uri;
+
+public class AcimRestURI {
+	
+	public static final String REST_ACIM_WEB = "/acim-web";
+
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<title th:text="#{web.title}"
+	layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">ACIM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- default header name is X-CSRF-TOKEN -->
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<link rel="shortcut icon" href="/res/favicon.ico" th:href="@{/res/favicon.ico}" type="image/x-icon">
+<link rel="icon" href="/res/favicon.ico" type="image/x-icon">
+<script type="text/javascript" src="res/jquery/jquery-1.12.4.min.js" th:src="@{/res/jquery/jquery-1.12.4.min.js}"></script>
+<link rel="stylesheet" type="text/css" media="all" href="res/bootstrap-3.3.7/css/bootstrap.min.css" th:href="@{/res/bootstrap-3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="res/font-awesome-4.6.3/css/font-awesome.min.css" th:href="@{/res/font-awesome-4.6.3/css/font-awesome.min.css}" />
+
+<!-- jQery UI -->
+<script type="text/javascript" src="res/jquery/jquery-ui-1.9.2.custom.min.js" th:src="@{/res/jquery/jquery-ui-1.9.2.custom.min.js}"></script>
+<link rel="stylesheet" type="text/css" media="all" href="res/css/custom-theme/jquery-ui-1.9.2.custom.css" th:href="@{/res/css/custom-theme/jquery-ui-1.9.2.custom.css}" />
+
+<!-- jqGrid -->
+<script type="text/javascript" src="res/jqgrid/js/jquery.jqGrid.min.js" th:src="@{/res/jqgrid/js/jquery.jqGrid.min.js}"></script>	
+<link rel="stylesheet" type="text/css" media="all" href="res/jqgrid/css/ui.jqgrid.css" th:href="@{/res/jqgrid/css/ui.jqgrid.css}" />	
+	
+<!-- Grid Locale -->
+<script type="text/javascript" src="res/jqgrid/js/i18n/grid.locale-en.js" th:src="@{/res/jqgrid/js/i18n/grid.locale-en.js}"></script>	
+<script type="text/javascript" src="res/jqgrid/js/i18n/grid.locale-th.js" th:src="@{/res/jqgrid/js/i18n/grid.locale-th.js}"></script>	
+			
+<!-- jquery File and Ajax Submit -->			
+<script type="text/javascript" th:src="@{/res/jquery/jquery.MultiFile.js}"></script>
+<script type="text/javascript" th:src="@{/res/jquery/jquery.form.js}"></script>			
+			
+	
+<!-- ACIM -->
+<script type="text/javascript" src="res/js/main.js" th:src="@{/res/js/main.js}"></script>
+<script type="text/javascript" src="res/js/main.js" th:src="@{/res/js/auto-complete.js}"></script>
+<link rel="stylesheet" type="text/css" media="all" href="res/css/bootstrap-custom.css" th:href="@{/res/css/bootstrap-custom.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="res/css/main.css" th:href="@{/res/css/main.css}" />
+</head>
+<body>
+	<header class="header" layout:fragment="header">
+		<div class="container"
+			th:if="${#authorization.expression('isAuthenticated()')}">
+			<img th:src="@{/res/img/image_login/bg_head.png}" />
+			<ul class="nav navbar-nav nav-header-logout pull-right">
+				<li>
+					<form class="form-horizontal" method="POST" enctype="application/x-www-form-urlencoded" action="/logout" th:action="@{/logout}">
+						<span class="form-control-static" sec:authentication="principal.firstName">username</span>&nbsp
+						<span class="form-control-static" sec:authentication="principal.lastName">lastname</span>
+						<button type="submit" class="btn btn-brown">
+							<span class="glyphicon glyphicon-log-out"></span> Logout
+						</button>
+					</form>
+				</li>
+			</ul>
+
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<img th:src="@{/res/img/icon/logo-new.png}" />
+				</div>
+				<div class="col-md-6 text-center">
+					<ul class="nav nav-pills h5 menu-bar-icon">
+						<li th:if="${session.SESSION_USER_MENU.hasMenu('USERPROFILE')}">
+							<a th:if="${session.sessionPage!='USERPROFILE'}" th:href="@{'/profile'}"><img
+								th:src="@{/res/img/icon/profile_inactive.png}" />
+								<p th:utext="#{common.label.profile}"></p></a>
+							<a th:if="${session.sessionPage=='USERPROFILE'}" th:href="@{'/profile'}"><img
+								th:src="@{/res/img/icon/profile_active.png}" />
+								<p th:utext="#{common.label.profile}"></p></a>
+						</li>
+						<li th:if="${session.SESSION_USER_MENU.hasMenu('USERREQUEST')}">
+							<a th:if="${session.sessionPage!='USERREQUEST'}" th:href="@{'/userrequest/start'}"> <img
+								th:src="@{/res/img/icon/user_request_inactive.png}" />
+								<p th:utext="#{common.label.ur}"></p></a>
+							<a th:if="${session.sessionPage=='USERREQUEST'}" th:href="@{'/userrequest/start'}"> <img
+								th:src="@{/res/img/icon/user_request_active.png}" />
+								<p th:utext="#{common.label.ur}"></p></a>
+						</li>
+						<li th:if="${session.SESSION_USER_MENU.hasMenu('TODOLIST')}">
+							<a th:if="${session.sessionPage!='TODOLIST'}" th:href="@{'/todolist'}"> <img
+								th:src="@{/res/img/icon/todolist_inactive.png}" />
+								<p th:utext="#{common.label.todo}"></p></a>
+							<a th:if="${session.sessionPage=='TODOLIST'}" th:href="@{'/todolist'}"> <img
+								th:src="@{/res/img/icon/todolist_active.png}" />
+								<p th:utext="#{common.label.todo}"></p></a>
+						</li>
+						<li th:if="${session.SESSION_USER_MENU.hasMenu('WATCHLIST')}">
+							<a th:if="${session.sessionPage!='WATCHLIST'}" th:href="@{'/watchlist'}"><img
+								th:src="@{/res/img/icon/todolist_inactive.png}" />
+								<p th:utext="#{common.label.watchlist}"></p></a>
+							<a th:if="${session.sessionPage=='WATCHLIST'}" th:href="@{'/watchlist'}"><img
+								th:src="@{/res/img/icon/todolist_active.png}" />
+								<p th:utext="#{common.label.watchlist}"></p></a>
+						</li>
+						<li th:if="${session.SESSION_USER_MENU.hasMenu('REPORT')}">
+							<a th:if="${session.sessionPage!='REPORT'}" th:href="@{'/report'}"><img
+								th:src="@{/res/img/icon/user_request_inactive.png}" />
+								<p th:utext="#{common.label.report}"></p></a>
+							<a th:if="${session.sessionPage=='REPORT'}" th:href="@{'/report'}"><img
+								th:src="@{/res/img/icon/user_request_active.png}" />
+								<p th:utext="#{common.label.report}"></p></a>
+						</li>
+						<li th:if="${session.SESSION_USER_MENU.hasMenu('ADMIN')}">
+							<a th:if="${session.sessionPage!='ADMIN'}" th:href="@{/admin/applications}"><img
+								th:src="@{/res/img/icon/admin_inactive.png}" />
+								<p th:utext="#{common.label.adminpanel}"></p></a>
+							<a th:if="${session.sessionPage=='ADMIN'}" th:href="@{/admin/applications}"><img
+								th:src="@{/res/img/icon/admin_active.png}" />
+								<p th:utext="#{common.label.adminpanel}"></p></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</header>
+	<div class="container">
+		<div id="page-loader" class="page-loading" style="display: none;">
+		 	<div class="texton-loading"><p style="margin-top: 7px;">Loading Page</p></div>
+		</div>
+		<div id="process-loader" class="process-loading" style="display: none;">
+			<div class="texton-loading"><p style="margin-top: 7px;">Loading Page</p></div>
+		</div>
+		<div layout:fragment="content">Page content</div>
+	</div>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

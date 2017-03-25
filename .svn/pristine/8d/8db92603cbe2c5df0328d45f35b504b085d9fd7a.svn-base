@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout-error}">
+<head>
+<title>Login</title>
+</head>
+<body>
+	<div class="error-page" layout:fragment="content">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Page Not Found : Back to <a href="/login" th:href="@{/login}">Login</a></h1>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

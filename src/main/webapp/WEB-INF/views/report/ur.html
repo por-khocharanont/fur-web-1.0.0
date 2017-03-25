@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Report</title>
+<script th:inline="javascript">
+/*<![CDATA[*/
+           var flows = [[${flows}]];
+/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/res/js/views/report/report.ur.js}" > 
+</script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="navigation navi-left">
+					<ul>
+						<img th:src="@{/res/img/icon/user_request_inactive.png}" height="42" width="42">
+						<B th:utext="#{report.label.title}"></B>
+						<li>
+							<a th:href="@{/report}" th:utext="#{report.hnavbar.application}" ></a>
+						</li>
+						<li>
+							<a th:href="@{/report/eligible}" th:utext="#{report.hnavbar.eligible}"></a>
+						</li>
+						<li>
+							<a th:href="@{/report/ur}" th:utext="#{report.hnavbar.searchur}" class ="link-active"></a>
+						</li>
+					</ul>
+					<br>
+				</div>
+				<div class="col-md-12">
+					<h1 class="font-label-title" th:utext="#{report.label.title}" ></h1>
+					<hr class="hr-line">
+					<form id="formReportUr" method="POST" class="form-horizontal" th:action="@{/report/serach/urlist}">
+						<div class="col-md-1"></div>
+						<div class="col-md-5">
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">Request No</label>
+								<div class="col-md-7">
+									<input class="form-control" name="requestNo" maxlength="100"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">UR No</label>
+								<div class="col-md-7">
+									<input class="form-control" name="urNo" maxlength="100"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">Request Date</label>
+								<div class="col-md-7" >
+											<input type="text" id="dteStart" style="width: 45%;" name="startDate" readonly="true" /> 
+											<span class=" detail-head "> To <input style="width: 45%;" type="text" id="dteTo" name="endDate" readonly='true' /></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">Request By</label>
+								<div class="col-md-7">
+									<input class="form-control" name="requestUrBy" maxlength="100" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">Request Type</label>
+								<div class="col-md-7">
+									<select class="form-control" name ="requestType">
+										<option value="" selected>All</option>
+										<option value="1">New</option>
+										<option value="2">Terminate</option>
+										<option value="3">Change</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label">User List</label>
+									<div class="col-md-7">
+										<input class="form-control" name="userList" maxlength="100" />
+									</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">Authorization user</label>
+								<div class="col-md-7">
+									<select class="form-control" name ="authorUser">
+										<option value="">All</option>
+										<option value="1">Allowed</option>
+										<option value="2">Not Allowed</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-5">
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">UR Status</label>
+								<div class="col-md-7">
+									<select class="form-control" name ="urStatus">
+										<option value="" selected>All</option>
+										<option value="1">Process</option>
+										<option value="2">Complete</option>
+										<option value="3">Reject</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-4 col-md-offset-1 control-label">UR Node</label>
+								<div class="col-md-7">
+										<select class="form-control" name ="urNode">
+											<option value="" selected>All</option>
+											<option value="1">Waiting for User</option>
+											<option value="2">Waiting for Manager</option>
+											<option value="3">Waiting for Role Iden</option>
+											<option value="4">Waiting for App Owner</option>
+											<option value="5">Waiting for Cutodain</option>
+											<option value="6">Waiting for Close</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label">UR Flow</label>
+									<div class="col-md-7">
+										<select class="form-control" name ="urFlow">
+											<option value="" selected>All</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label">Application</label>
+									<div class="col-md-7">
+										<input class="form-control" name="appName" maxlength="100" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label">Type</label>
+									<div class="col-md-7">
+										<select class="form-control" name ="type">
+											<option value="">All</option>
+											<option value="1">Application</option>
+											<option value="2">Telecom</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label">User Type</label>
+									<div class="col-md-7">
+										<select class="form-control" name ="userType">
+											<option value="">All</option>
+											<option value="1">Back Office</option>
+											<option value="2">ACC</option>
+											<option value="3">Branch</option>
+											<option value="4">Outlet</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label">Period</label>
+									<div class="col-md-7">
+										<select class="form-control" name ="period">
+											<option value="" selected>All</option>
+											<option value="1">Permanent</option>
+											<option value="2">Temporary</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-4 col-md-offset-1 control-label"></label>
+									<div class="userDatepicker col-md-7" style="display:none;" >
+												<input type="text" style="width: 45%;" name="startDateUFU" readonly="true" /> 
+												<span class=" detail-head "> To <input style="width: 45%;" type="text" name="endDateUFU" readonly='true' /></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-1"></div>
+							<div class="form-group">
+									<div class="btn-panel col-md-12 text-center">
+										<button type="submit" class="btn btn-green btn-lg-w1" id="searchBtn">Search</button>
+										<button type="reset" class="btn btn-grey btn-lg-w1">Reset</button>
+									</div>
+							</div>
+							<div class="col-md-12 ">
+								<div class="pull-right">
+									<button type="button" class="btn btn-green btn-lg-w1 empty" id="export">Export</button>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-12 data-table tableReportUr">
+											<table id="tableReportUr"></table>
+											<div id="tableReportUrPager"></div>
+								</div>
+								<div class="col-md-12 text-center empty" th:utext="|#{report.label.empty}|">
+								</div>
+							</div>
+					</form>
+					<form id="exportReportData" method="POST" class="form-horizontal" th:action="@{/report/export/UrDefault}" >
+						<input name="jsonData" type="hidden" th:action="@{/userrequest/}"/>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

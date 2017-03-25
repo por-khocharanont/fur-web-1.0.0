@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Watch Lists</title>
+<script type="text/javascript"th:src="@{/res/js/views/watchlist/watchlist.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			
+			<div class="col-md-12">
+				<div class="navigation navi-left">
+					<ul>
+						<img th:src="@{/res/img/icon/todolist_inactive.png}" height="42" width="42">
+						<B th:utext="#{common.label.watchlist}"></B>
+						<li>
+							<a href="" class="nav-menu-bar link-active" value="1">On Process</a>
+						</li>
+						<li>
+							<a href="" class="nav-menu-bar" value="2" >Complete</a>
+						</li>
+						<li>
+							<a href="" class="nav-menu-bar" value="3" >Reject</a>
+						</li>
+					</ul>
+				</div>
+				
+				<h1 class="font-label-title" th:utext="#{common.label.watchlist}"></h1>
+				<hr class="hr-line">
+				
+				
+				
+				<div class="row">
+					<p>
+					<input type="hidden" id="urStatus" name="urStatus" value="1"/>
+					<span id="userlogin" sec:authentication="principal.username" style="display: none"></span>
+					<input type="hidden" id="urlk" name="urlk" th:action="@{/userrequest}"/>
+					</p>
+					
+						<form class="form-horizontal" id="searchForm" name="searchForm" th:action="@{/watchlist/search/grid}" method="POST">
+							<div class="col-sm-1"></div>
+							<div class="col-sm-10">
+	
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-3 control-label font-label " >Request No</label>
+									<div class="col-md-5">
+										<input class="form-control" id="requestNo" name="requestNo" maxlength="100" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-3 control-label font-label " >UR No</label>
+									<div class="col-md-5">
+										<input class="form-control" id="urNo" name="urNo" maxlength="100" />
+									</div>
+								</div>
+								<div class="form-group" id="div-date">
+									<label class="col-md-offset-1 col-md-3 control-label font-label ">Start</label>
+									<div class="col-sm-2">
+										<input class="form-control"id="startDate"  name="startDate" readonly='true' style="background-color: white;"/> 
+							
+									</div>
+									<label class="col-md-1 control-label font-label  middle-text">To</label>
+									<div class="col-sm-2">
+										<input class="form-control" id="endDate" name="endDate" readonly='true' style="background-color: white;"/>
+									</div>
+								</div>
+								
+								<div class="form-group"  id="div-urstep">
+									<label class="col-md-offset-1 col-md-3 control-label font-label ">Status</label>
+									<div class="col-md-5">
+										<select class="form-control" id="selectUrStep" name="selectUrStep">
+											<option value="0">All</option>
+											<option value="1">Waiting for User</option>
+											<option value="2">Waiting for Manager</option>
+											<option value="3">Waiting for Role Iden</option>
+											<option value="4">Waiting for App Owner</option>
+											<option value="5">Waiting for Custodian</option>
+											<option value="6">Waiting for Close</option>
+										</select>
+									</div>
+			                    </div>
+			  
+								<div class="form-group">
+									<div class="btn-panel col-md-12 text-center">
+										<button type="button" class="btn btn-green" id="searchBtn" th:utext="#{common.button.search}"></button>
+										<button type="reset" class="btn btn-grey" id="resetBtn" th:utext="#{common.button.reset}"></button>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1"></div>
+						</form>
+				</div>		
+			</div>
+			
+			<div class="col-md-12">
+				<div class="action-panel pull-right">
+					<button type="button" class="btn btn-danger" name="watchListCloseUrBtn" id="watchListCloseUrBtn" th:action="@{/watchlist/ur/close}"  th:utext="#{watchlist.button.closeur}"></button>
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<!-- Search Result -->
+				<div id="jqgridwatchlist" class="data-table input-form">
+					<table id="jqgridTable"></table>
+					<div id="jqgridPager"></div>
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<div class="empty" style=" text-align:center;display: none">
+					<font th:utext="#{common.data.not.found}"></font>
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<br>
+			</div>
+			
+			
+			
+				
+		</div>
+		
+		<div id="dialog-not-select-row" title="Warning" th:utext="#{watchlist.dialog.select}"></div>
+		<div id="dialog-not-closeur" title="Warning" th:utext="#{watchlist.dialog.error}"></div>
+		<div id="dialog-close-confirm" title="Confirmation" th:utext="#{watchlist.dialog.confirm}"> </div>
+		<div id="dialog-close-success" title="Success" th:utext="#{watchlist.dialog.success}"></div>
+		<div id="dialog-close-error" title="Warning" th:utext="#{watchlist.dialog.error}"></div>
+		
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

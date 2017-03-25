@@ -1,0 +1,12 @@
+package th.co.ais.mimo.acim.web.service;
+
+import java.util.Map;
+
+import th.co.ais.mimo.acim.web.model.grid.TodoListInfoGridResponse;
+import th.co.ais.mimo.acim.web.service.exception.ServiceException;
+
+public interface TodoListService {
+	
+	public TodoListInfoGridResponse getTodoList(Map<String,String> params) throws ServiceException;
+	
+}

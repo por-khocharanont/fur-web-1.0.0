@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Eligible</title>
+<script type="text/javascript"th:src="@{/res/js/views/admin/eligible/eligible.search.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="navigation navi-left">
+				<ul>
+					<img th:src="@{/res/img/icon/admin_inactive.png}" height="42" width="42">
+					<B th:utext="#{common.label.adminpanel}"></B>
+					<li>
+						<a th:href="@{/admin/applications}" th:utext="#{common.label.app}"></a>
+					</li>
+					<li>
+						<a th:href="@{/admin/eligible}" th:utext="#{common.label.eligible}" class ="link-active"></a>
+					</li>
+				</ul>
+				<br>
+			</div>
+
+			<div class="col-md-12">
+			<h1 class="font-label-title" th:utext="#{common.label.eligible}"></h1>
+			<hr class="hr-line">
+				
+					<form class="form-horizontal" id="searchForm" name="searchForm"
+						th:action="@{/admin/eligible/search/grid}" method="POST">
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{eligible.label.orgcode}"></label>
+								<div class="col-md-5">
+									<input type="text" class="form-control " id="orgCode" name="orgCode" maxlength="100" th:action="@{/admin/eligible/autocomplete/orgcode}" />
+								</div>
+								
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{eligible.label.orgname}"></label>
+								<div class="col-md-5">
+									<input type="text" class="form-control " id="orgDesc" name="orgDesc" maxlength="100" th:action="@{/admin/eligible/autocomplete/orgdesc}" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{eligible.label.app}"></label>
+								<div class="col-md-5">
+									<input type="text" class="form-control " id="appName" name="appName" maxlength="100" th:action="@{/admin/applications/autocomplete/appname}" /> 
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<div class="btn-panel col-md-12 text-center">
+									<button type="button" class="btn btn-green" id="searchBtn" th:utext="#{common.button.search}"></button>
+									<button type="reset" class="btn btn-grey" th:utext="#{common.button.reset}"></button>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
+					</form>
+
+			</div>
+			
+			<div class="col-md-12">
+				<div class="action-panel pull-right">
+					<a type="button" class="btn btn-green" th:href="@{/admin/eligible/createpage}" th:utext="#{eligible.button.add}"></a>
+		
+					<button type="button" class="btn btn-danger" name="eligibleDeleteBtn" id="eligibleDeleteBtn" th:action="@{/admin/eligible/id/list}" th:utext="#{common.button.delete}"></button>
+					
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<!-- Search Result -->
+				<div id="jqgrideligible" class="data-table input-form">
+					<table id="jqgridTable"></table>
+					<div id="jqgridPager"></div>
+				</div>
+				
+			</div>
+			
+			<div class="col-md-12">
+				<div class="empty" style=" text-align:center;display: none">
+					<h4 th:utext="#{common.data.not.found}"></h4>
+				</div>
+			</div>
+	
+		</div>
+		<div id="dialog-not-select-row" title="Warning" th:utext="#{eligible.dialog.detail.delete.null}"></div>
+		<div id="dialog-delete-confirm" title="Confirmation" th:utext="#{eligible.dialog.confirm}"></div>
+		<div id="dialog-delete-success" title="Success" th:utext="#{eligible.dialog.success}"></div>
+		<div id="dialog-delete-error" title="Warning" th:utext="#{eligible.dialog.error}"></div>
+		
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<title th:text="#{web.title}" layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">ACIM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/res/favicon.ico" th:href="@{/res/favicon.ico}" type="image/x-icon">
+<link rel="icon" href="/res/favicon.ico" type="image/x-icon">
+<script type="text/javascript" src="res/jquery/jquery-1.12.4.min.js" th:src="@{/res/jquery/jquery-1.12.4.min.js}"></script>
+<link rel="stylesheet" type="text/css" media="all" href="res/bootstrap-3.3.7/css/bootstrap.min.css" th:href="@{/res/bootstrap-3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="res/font-awesome-4.6.3/css/font-awesome.min.css" th:href="@{/res/font-awesome-4.6.3/css/font-awesome.min.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="res/css/bootstrap-custom.css" th:href="@{/res/css/bootstrap-custom.css}" />
+
+<script type="text/javascript" src="res/js/main.js" th:src="@{/res/js/main.js}"></script>
+<link rel="stylesheet" type="text/css" media="all" href="res/css/main.css" th:href="@{/res/css/main.css}" />
+</head>
+<body>
+	<header class="header" layout:fragment="header">
+		<div class="container text-center">
+			<h1>ACIM</h1>
+		</div>
+	</header>
+	<div class="content container">
+		<div layout:fragment="content">Page content</div>
+	</div>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

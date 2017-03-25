@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>UserRequest</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:inline="javascript">
+/*<![CDATA[*/
+var datasResult = [[${datasResult}]];
+/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/res/js/views/userrequest/userrequest.submit.js}">
+</script>
+<style>
+tr.jqgrow>td.genUser>div {
+	overflow-y: scroll;
+    max-height: 20px;
+    overflow: auto;
+}
+td.form-view-data>span>div {
+	overflow-y: scroll;
+    max-height: 150px;
+    overflow: auto;
+}
+</style>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="col-md-12">
+					<h1 class="font-label-title">User Request</h1>
+					<hr class="hr-line">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label">Request No</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="requestNo" th:text="${datasResult[0].requestNo}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label">Request Date</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="requestDate" th:text="${datasResult[0].requestDate}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label">UR Type</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="subUsertype" th:text="${datasResult[0].urType}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label" >Request User</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="subRequestBy" th:text="${datasResult[0].requestBy}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label">User Request Name</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="subname" th:text="${datasResult[0].name}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label">Request Type</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="subRequestType" th:text="${datasResult[0].requestUser}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label">Subject</label>
+							<div class="col-md-9">
+								<p class="form-control-static " name="subSubject" th:text="${datasResult[0].subject}"></p>
+							</div>
+						</div>
+						<div class="form-group">
+							  <label class="col-md-3 control-label font-label" for="detail">Detail</label>
+							  <div class="col-md-9">
+							  <p class="form-control-static " name="subDetail" th:text="${datasResult[0].detail}==''?'-':${datasResult[0].detail}"></p>
+							  </div>
+						</div>
+					</div>
+					<input name="urlWatchlist" type="hidden" th:action="@{/userrequest/}"/>
+					<div class="form-horizontal">
+						<h1 class="font-label-title">Application</h1>
+						<hr class="hr-line">
+						<div class="col-md-12">
+							<div class="form-group">
+							<label>สามารถตรวจสอบข้อมูลการขอ UR ได้ที่  <a th:href="@{/watchlist}"><font color="green"><u>Watch List</u></font></a></label>
+							</div>
+							<div class="form-group appjqGrid">
+								<table id="appjqGrid"></table>
+				    		<!-- 	<a id="editUrl" style="display:none;">editUrl</a> -->
+							</div>
+							<div class="form-group appChangejqGrid" style="display: none;">
+								<table id="appChangejqGrid"></table>
+				    		<!-- 	<a id="editUrl" style="display:none;">editUrl</a> -->
+							</div>
+							<div class="form-group appTerminateGrid" style="display: none;">
+								<table id="appTerminateGrid"></table>
+				    		<!-- 	<a id="editUrl" style="display:none;">editUrl</a> -->
+							</div>
+			    		</div>
+					</div>
+					<h1 class="font-label-title" name="urremark" style="display: none;"> UR Remark</h1>
+					<hr class="hr-line" name="urremark" style="display: none;">
+					<div class="col-md-12" name="urremark" style="display: none;">
+						<textarea name="urremark" rows="7" cols="80" readonly="readonly" disabled="disabled" style="overflow-y: scroll; resize: none; background:white;display: none;"></textarea>
+					</div>
+					<div class="col-md-12"><BR></div>
+			</div>
+		</div>
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

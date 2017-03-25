@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Request No</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+	
+		<div class="row">
+			<div class="col-md-12">
+				<h1 class="font-label-title" >Request No</h1>
+				<hr class="hr-line">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.request.no}">Request No</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.requestNo}">userRequestNo</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.request.date}">Request Date</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${#dates.format(requestNoDetailModel.requestDate, 'dd/MM/yyyy HH:mm:ss')}">requestDate</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.ur.type}">UR Type</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.urTypeText}">urType</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.request.user}">Request User</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.requestListText}">requestUser</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.user.request.name}">User Request Name</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.enName +' '+ requestNoDetailModel.enSurName}">userRequestName</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.request.type}">Request Type</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.requestTypeText}">requestType</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.subject}">Subject</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.subject}">subject</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.detail}">Detail</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.detail==''?'-':requestNoDetailModel.detail}">detail</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group" th:if="${requestNoDetailModel.requestRemark!=''}">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.remark}"></label>
+									<div class="col-md-7">
+										<textarea rows="4" cols="40" disabled style="resize: none;" th:text="${requestNoDetailModel.requestRemark}" ></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.username}">Username</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.username}">username</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.email}">Email</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.email}">email</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.phone}">Phone</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.phone}">phone</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.mobile}">Mobile</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.mobile}">mobile</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.position}">Position</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.position}">position</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.organize}">Organize</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.orgDesc}">organize</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="col-md-offset-1 col-md-4 control-label font-label" th:utext="#{requestno.label.company}">Company</label>
+									<div class="col-md-7">
+										<span class="form-control-static"
+											th:text="${requestNoDetailModel.coName}">company</span>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+<!-- 			<div class="col-md-12"> -->
+<!-- 				<h1 class="font-label-title">User Request</h1> -->
+<!-- 				<hr class="hr-line"> -->
+<!-- 			</div> -->
+			
+			<div class="col-md-12">
+					<h1 class="font-label-title">UR</h1>
+					<table class = "table" >
+						<thead>
+							<tr class="table-header-color">
+								<th class="col-no" th:utext="#{requestno.label.no}">No</th>
+								<th class="col-data" th:utext="#{requestno.label.ur.no}">UR No</th>
+								<th class="col-action" th:utext="#{requestno.label.type}">Type</th>
+								<th class="col-data" th:utext="#{requestno.label.application}">Application</th>
+								<th class="col-data" th:utext="#{requestno.label.role.application}">Role Application</th>
+								<th class="col-action" th:utext="#{requestno.label.period}">Period</th>
+<!-- 								<th class="col-action" th:utext="#{requestno.label.user}">User</th> -->
+								<th class="col-data" th:utext="#{requestno.label.status}">Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="no-padding" colspan="7">
+									<div class="scroll-bar">
+										<table class = " table table-hover" >
+											<tbody>
+												<tr th:each="requestNo,idx : ${requestNoDetailModel.listUr}">
+													<td class="col-no" th:text="${idx.index}+1"></td>
+													
+													<td class="col-data">
+														<a th:href="@{/userrequest/ur/detail/{urId}(urId=${requestNo.urId})}" >
+															<font color='green'>
+																<u>
+																	<span class="cursour-link" th:text="${requestNo.urId}"></span>
+																</u>
+															</font>
+														</a>
+													</td>
+													<td class="col-action" th:text="${requestNo.requestTypeText}"></td>
+													<td class="col-data" th:text="${requestNo.appName}"></td>
+													<td class="col-data" th:text="${requestNo.appRoleName}"></td>
+													<td class="col-action" th:if="${requestNo.periodType == '1'}" th:text="${requestNo.periodTypeText}">
+														<div><span th:utext="#{requestno.label.start.date}"></span><span th:text="${#dates.format(requestNo.startTime, 'dd/MM/yyyy')}"></span></div>
+														<div><span th:utext="#{requestno.label.end.date}"></span><span th:text="${#dates.format(requestNo.endTime, 'dd/MM/yyyy')}"></span></div>
+													</td>
+													<td class="col-action" th:if="${requestNo.periodType == '2'}" th:text="${requestNo.periodTypeText}"></td>
+													<td class="col-action" th:if="${requestNo.periodType == null}"></td>
+													<td class="col-data" th:text="${requestNo.statusText}"></td>
+												</tr>							
+											</tbody>
+										</table>
+									</div>
+								</td>
+							</tr>							
+						</tbody>
+					</table>
+					
+				</div>
+				
+				<div class="col-md-12">
+					<div class="row"><br></div>
+				</div>
+			
+		</div>
+		
+	
+
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

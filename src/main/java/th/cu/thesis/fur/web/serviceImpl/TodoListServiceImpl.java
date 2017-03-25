@@ -1,0 +1,84 @@
+package th.cu.thesis.fur.web.serviceImpl;
+
+import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import th.cu.thesis.fur.web.model.grid.TodoListInfoGridRequest;
+import th.cu.thesis.fur.web.model.grid.TodoListInfoGridResponse;
+import th.cu.thesis.fur.web.service.TodoListService;
+import th.cu.thesis.fur.web.service.exception.ServiceException;
+import th.cu.thesis.fur.web.util.RestUtil;
+import th.cu.thesis.fur.web.util.Utils;
+
+@Service("todoListService")
+public class TodoListServiceImpl implements TodoListService{
+
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Value("${fur.api.host}")
+	private String apiHost;
+	
+	@Override
+	public TodoListInfoGridResponse getTodoList(Map<String, String> params) throws ServiceException {
+		TodoListInfoGridResponse todoListGridResponse = null;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		String endPoint = apiHost +"/todolist/ur";// Change EndPoint 
+		
+		TodoListInfoGridRequest request = new TodoListInfoGridRequest();
+		request.setUrStep(params.get("urStep"));
+		request.setUrId(params.get("urId"));
+		request.setType(params.get("type"));
+		String sDate = params.get("startDate");
+		String eDate = params.get("endDate");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date startDate = null;
+		Date endDate = null;
+		try {
+			if(StringUtils.isNotEmpty(sDate)){
+					startDate = formatter.parse(sDate);
+			}
+			
+			if(StringUtils.isNotEmpty(eDate)){
+					endDate = formatter.parse(eDate);
+			}
+		}
+		catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		request.setStartDate(startDate);
+		request.setEndDate(endDate);
+		request.setUrStep(params.get("urStep"));
+		request.setRequestNo(params.get("requestNo"));
+		request.setSidx(params.get("sidx"));
+		request.setSord(params.get("sord"));
+		request.setPage(Integer.valueOf(params.get("page")));
+		request.setRows(Integer.valueOf(params.get("rows")));
+		
+		HttpEntity<TodoListInfoGridRequest> requestEntity = new HttpEntity<TodoListInfoGridRequest>(request,headers);
+		ResponseEntity<TodoListInfoGridResponse> responseEntity;
+		
+		try {
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.POST, requestEntity,TodoListInfoGridResponse.class);
+			todoListGridResponse = responseEntity.getBody();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return todoListGridResponse;
+	}
+
+}

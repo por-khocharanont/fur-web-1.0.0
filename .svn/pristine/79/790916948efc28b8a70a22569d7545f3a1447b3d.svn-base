@@ -1,0 +1,319 @@
+package th.co.ais.mimo.acim.web.serviceImpl;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import com.google.gson.reflect.TypeToken;
+
+import th.co.ais.mimo.acim.web.filter.LoggingRequestInterceptor;
+import th.co.ais.mimo.acim.web.model.AuthUser;
+import th.co.ais.mimo.acim.web.model.RolePermission;
+import th.co.ais.mimo.acim.web.model.User;
+import th.co.ais.mimo.acim.web.model.UserMenu;
+import th.co.ais.mimo.acim.web.model.grid.UserApplicationInfoGridRequest;
+import th.co.ais.mimo.acim.web.model.grid.UserApplicationInfoGridResponse;
+import th.co.ais.mimo.acim.web.model.grid.UserTokenInfoGridResponse;
+import th.co.ais.mimo.acim.web.repository.model.UserInfo;
+import th.co.ais.mimo.acim.web.service.UserService;
+import th.co.ais.mimo.acim.web.service.exception.ServiceException;
+import th.co.ais.mimo.acim.web.util.RestUtil;
+import th.co.ais.mimo.acim.web.util.Utils;
+
+@Service("userService")
+public class UserServiceImpl implements UserService {
+
+	// private final Logger logger =
+	// LoggerFactory.getLogger(UserServiceImpl.class);
+
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@Value("${acim.api.host}")
+	private String apiHost;
+
+	@Override
+	public UserInfo authUser(String username, String password, String ipAddress) throws ServiceException {
+
+		UserInfo userInfo = null;
+
+		String endPoint = apiHost + "/users/auth";
+		HttpHeaders headers = RestUtil.createAuthenHeader(username,ipAddress);
+		AuthUser user = new AuthUser();
+		user.setUsername(username);
+		user.setPassword(password);
+		String userJson = Utils.getGsonDate().toJson(user);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(userJson, headers);
+		ResponseEntity<UserInfo> responseEntity = null;
+		try {
+//			responseEntity = restTemplate.postForEntity(new URI(endPoint), requestEntity, String.class);
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.POST, requestEntity, UserInfo.class);
+			userInfo =  responseEntity.getBody();
+
+		} catch (HttpStatusCodeException e) {
+			String body = e.getResponseBodyAsString();
+			//TODO
+			//need fix
+		} catch (URISyntaxException e) {
+
+			// ?????????????????????
+			// authUserStatus = new AuthUserStatus();
+			// authUserStatus.setCode(999);
+			// authUserStatus.setMessage("Connection Error");
+		}
+
+		return userInfo;
+	}
+
+	@Override
+	public User getProfile(String username) throws ServiceException {
+
+		User emp = null;
+
+		String endPoint = apiHost + "/users/userprofile/" + username;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+
+		HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+		ResponseEntity<User> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.GET, requestEntity, User.class);
+
+			emp =  responseEntity.getBody();
+		} catch (RestClientException e) {
+		} catch (URISyntaxException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return emp;
+	}
+	
+	@Override
+	public User getProfileByUserId(String userId) throws ServiceException {
+
+		User emp = null;
+
+		String endPoint = apiHost + "/users/userprofile/userId/" + userId;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+
+		HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+		ResponseEntity<User> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.GET, requestEntity, User.class);
+			emp = responseEntity.getBody();
+		} catch (RestClientException e) {
+			// ????????????????????
+			// do nothing?
+		} catch (URISyntaxException e) {
+			// ?????????????????????
+			// do nothing?
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return emp;
+	}
+
+	@Override
+	public UserApplicationInfoGridResponse getApplicationByType(String type, Map<String, String> params,
+			String username) throws ServiceException {
+
+		UserApplicationInfoGridResponse userApplicationInfoGridResponse = null;
+
+		String endPoint = apiHost + "/users/applications/" + type;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+
+		UserApplicationInfoGridRequest userApplicationInfoGridRequest = new UserApplicationInfoGridRequest();
+		Integer page = Integer.valueOf(params.get("page"));
+		Integer rows = Integer.valueOf(params.get("rows"));
+		String sidx = params.get("sidx");
+		String sord = params.get("sord");
+		String appName = params.get("appName");
+		String authorizationType = params.get("authorizationType");
+		String applicationType = params.get("applicationType");
+		userApplicationInfoGridRequest.setAppName(appName);
+		userApplicationInfoGridRequest.setUsername(username);
+		userApplicationInfoGridRequest.setAuthorizationType(authorizationType);
+		userApplicationInfoGridRequest.setApplicationType(applicationType);
+		userApplicationInfoGridRequest.setPage(page);
+		userApplicationInfoGridRequest.setRows(rows);
+		userApplicationInfoGridRequest.setSidx(sidx);
+		userApplicationInfoGridRequest.setSord(sord);
+
+		String userAppModelJson =  Utils.getGson().toJson(userApplicationInfoGridRequest);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(userAppModelJson, headers);
+		ResponseEntity<UserApplicationInfoGridResponse> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.POST, requestEntity, UserApplicationInfoGridResponse.class);
+
+			userApplicationInfoGridResponse =  responseEntity.getBody();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userApplicationInfoGridResponse;
+
+	}
+
+	@Override
+	public int countApplicationByType(String type, String username) throws ServiceException {
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("appName", "");
+		params.put("page","1");
+		params.put("rows","1");
+		params.put("sord","");
+		params.put("sidx","");
+		params.put("authorizationType","0");
+		params.put("applicationType",type);
+		int count_standard = this.getApplicationByType("standard", params, username).getRecords();
+		int count_special = this.getApplicationByType("special", params, username).getRecords();
+		return count_standard + count_special;
+	}
+
+	@Override
+	public UserTokenInfoGridResponse getApplicationByUserToken(Map<String,String> params,String username) throws ServiceException {
+
+		UserTokenInfoGridResponse userTokenInfoGridResponse = null;
+
+		String endPoint = apiHost + "/users/tokens";
+		HttpHeaders headers = RestUtil.createAPIHeader();
+
+		UserApplicationInfoGridRequest userApplicationInfoGridRequest = new UserApplicationInfoGridRequest();
+		Integer page = Integer.valueOf(params.get("page"));
+		Integer rows = Integer.valueOf(params.get("rows"));
+		String sidx = params.get("sidx");
+		String sord = params.get("sord");
+		String appName = params.get("appName");
+		String authorizationType = params.get("authorizationType");
+		String applicationType = params.get("applicationType");
+		userApplicationInfoGridRequest.setAppName(appName);
+		userApplicationInfoGridRequest.setUsername(username);
+		userApplicationInfoGridRequest.setAuthorizationType(authorizationType);
+		userApplicationInfoGridRequest.setApplicationType(applicationType);
+		userApplicationInfoGridRequest.setPage(page);
+		userApplicationInfoGridRequest.setRows(rows);
+		userApplicationInfoGridRequest.setSidx(sidx);
+		userApplicationInfoGridRequest.setSord(sord);
+
+		String userAppModelJson =  Utils.getGsonDate().toJson(userApplicationInfoGridRequest);
+		HttpEntity<String> requestEntity = new HttpEntity<String>(userAppModelJson, headers);
+		ResponseEntity<UserTokenInfoGridResponse> responseEntity;
+		try {
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.POST, requestEntity, UserTokenInfoGridResponse.class);
+
+			userTokenInfoGridResponse =  responseEntity.getBody();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return userTokenInfoGridResponse;
+
+	}
+
+	@Override
+	public int countTokenApplication(String username) throws ServiceException {
+		Map<String,String> params = new HashMap<String,String>();
+		params.put("appName", "");
+		params.put("page","1");
+		params.put("rows","1");
+		params.put("sord","");
+		params.put("sidx","");
+		params.put("authorizationType","0");
+		params.put("applicationType","");
+		int countTokenApplication = this.getApplicationByUserToken(params,username).getRecords();
+		return countTokenApplication;
+	}
+
+	@Override
+	public List<User> getUserByUsernameAndFullName(String username) throws ServiceException {
+		
+		List<User> emp = new ArrayList<User>();
+
+		String endPoint = apiHost + "/users/userlists/" + username;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+
+		HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+		//ResponseEntity<String> responseEntity;
+		try {
+			//responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.GET, requestEntity, String.class);
+			//Type collectionType = new TypeToken<List<User>>() {}.getType();
+			//emp =  Utils.getGson().fromJson(responseEntity.getBody(), collectionType);
+			
+			ResponseEntity<List<User>> responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<User>>(){});
+			emp = responseEntity.getBody();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return emp;
+	}
+
+	@Override
+	public UserMenu getUserMenu() throws ServiceException {
+		
+		UserMenu response = new UserMenu();
+		try {
+			
+			UserInfo userInfo = Utils.getuserInfo();
+			
+			String userId = userInfo.getUserId();
+			
+			String endPoint = apiHost +"/users/menu/"+ userId ;
+			HttpHeaders headers =  RestUtil.createAPIHeader();
+			
+			HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
+			ResponseEntity<String> responseEntity;
+			
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.GET, requestEntity, String.class);			
+		
+			response = Utils.getGson().fromJson(responseEntity.getBody(), UserMenu.class);
+			
+			
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return response;
+	}
+
+	@Override
+	public List<RolePermission> getRole() throws ServiceException {
+		List<RolePermission> response = new ArrayList<RolePermission>();
+		try {
+			
+			UserInfo userInfo = Utils.getuserInfo();
+			
+			String userId = userInfo.getUserId();
+			
+			String endPoint = apiHost +"/users/role/"+ userId ;
+			HttpHeaders headers =  RestUtil.createAPIHeader();
+			
+			HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
+			ResponseEntity<String> responseEntity;
+			
+			responseEntity = restTemplate.exchange(new URI(endPoint), HttpMethod.GET, requestEntity, String.class);			
+			response = Utils.getGson().fromJson(responseEntity.getBody(),  new TypeToken<List<RolePermission>>() {}.getType());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return response;
+	}
+
+}

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" th:src="@{/res/js/views/admin/application/edit/application.validate.js}"></script>
+<script type="text/javascript" th:src="@{/res/js/views/admin/application/edit/application.edit.js}"></script>
+<script type="text/javascript" th:src="@{/res/js/views/admin/application/edit/application.edit.eligible.js}"></script>
+<script type="text/javascript" th:src="@{/res/js/views/admin/application/edit/application.edit.appowner.js}"></script>
+<script type="text/javascript" th:src="@{/res/js/views/admin/application/edit/application.edit.custodian.js}"></script>
+</head>
+
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div id="dialog-confirm" class="dialog" title="Confirmation" th:utext="#{application.dialog.confirm}"></div>
+		<div id="dialog-success" class="dialog" title="Success" th:utext="#{application.dialog.success}"></div>
+		<div id="dialog-error-create" class="dialog" title="Warning" th:utext="#{application.dialog.error}"></div>
+		<div id="dialog-error-delete-role" class="dialog" title="Warning"><div id="deleteRoleTextError"></div></div>
+		<div id="dialog-warning-change-type" class="dialog" title="Confirmation" th:utext="#{application.dialog.confirm.change.type}"></div>
+		<div id="dialog-error-please-fill" class="dialog" title="Warning" th:utext="#{application.dialog.error.please.fill}"></div>
+	
+		<div class="row">
+			<div class="navigation navi-left">
+				<ul>
+					<img th:src="@{/res/img/icon/admin_inactive.png}" height="42" width="42">
+					<B th:utext="#{common.label.adminpanel}"></B>
+					<li>
+						<a th:href="@{/admin/applications}" th:utext="#{common.label.app}" class ="link-active"></a>
+					</li>
+					<li>
+						<a th:href="@{/admin/eligible}" th:utext="#{common.label.eligible}"></a>
+					</li>
+				</ul>
+				<br>
+			</div>
+		</div>
+		
+		<!-- Application -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="col-md-12">
+					<span class="font-label-title" th:utext="#{application.label.application}"></span>
+					<button class="header-content-app btn-icon-edit btn glyphicon glyphicon-cog"></button>
+				</div>
+				<div class="body-content show content-app">
+					<form class="form-horizontal" id="applicationForm" method="POST" 
+						name="applicationForm" th:action="@{/admin/applications/update}" enctype="multipart/form-data">
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<input type="hidden" name="jsonData"></input>
+							<input type="hidden" name="deleteFile"></input>
+							<input type="hidden" name="appId" th:value="${applicationModel.appId}" />
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label " th:utext="#{application.label.application.name}"></label>
+								<div class="col-md-5">
+									<input class="form-control font-label" name="appName"
+										th:value="${applicationModel.appName}" th:action="@{/admin/applications/appname}"></input>
+								</div>
+								<div class="col-md-4"></div>
+								<div class="col-md-offset-3 col-md-6">
+									<font class="control-label font-label" color="red" name="appNameErrorMsg" th:utext="#{application.error.name}"></font>
+									<font class="control-label font-label" color="green" name="appNameSuccessMsg" th:utext="#{application.success.name}"></font>
+									<font class="control-label font-label" color="red" name="appNameLengthMsg" th:utext="#{common.error.length.100}"></font>
+									<font class="control-label font-label" color="red" name="appNameNullMsg" th:utext="#{application.error.name.null}"></font>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label " th:utext="#{application.label.application.info}"></label>
+								<div class="col-md-5">
+									<textarea class="form-control"
+										th:text="${applicationModel.appInfo}" name="appInfo" rows="3"></textarea>
+								</div>
+								<div class="col-md-4"></div>
+								<div class="col-md-offset-3 col-md-6">
+									<font class="control-label font-label" color="red" name="appInfoLengthMsg" th:utext="#{common.error.length.250}"></font>
+								</div>
+							</div>
+		
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label" th:utext="#{application.label.application.application.type}"></label>
+								<div class="col-md-4">
+									<label class="radio-inline"> <input type="radio"
+										name="applicationType" value="1"
+										th:checked="${applicationModel.type}=='1'">
+										<span th:utext="#{application.label.type.application}"></span>
+									</label> 
+									<label class="radio-inline"> <input type="radio"
+										name="applicationType" value="2"
+										th:checked="${applicationModel.type}=='2'" >
+										<span th:utext="#{application.label.type.telecom}"> </span>
+									</label>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label " th:utext="#{application.label.application.authentication}"></label>
+								<div class="col-md-4">
+									<span th:each="option,idx : ${authenticationModel}"> 
+										<label class="checkbox-inline"> 
+											<input type="checkbox" name="authenBy" th:value="${idx.index}+1" 
+											th:text="${option.optionName}" th:checked="${option.appChecked}" />
+										</label>
+									</span>
+								</div>
+								<div class="col-md-5"></div>
+								<div class="col-md-6">
+									<font class="control-label font-label" color="red" name="appAuthenNullMsg" th:utext="#{application.error.authen.null}"></font>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label " th:utext="#{application.label.application.file}"></label>
+								<div class="col-md-5">
+									<input type="hidden" name="fileTotal" th:value="0" />
+									<div name="browseBtn" class="buttonupload btn btn-green">
+										<span>Browse</span>
+											<input type="file" class="btn upload" id="fileUpload" name="fileUpload"/> 
+		<!-- 								<input type="file" class="multi btn upload" th:maxlength="${#lists.isEmpty(appFileModel) ? 3 : 3- #lists.size(appFileModel)}" accept="xls|xlsx|doc|docx|txt|zip|rar|7z" id="fileUpload" name="fileUpload"/>  -->
+									</div>
+									<input type="hidden" th:value="${#lists.isEmpty(appFileModel) ? 0 : #lists.size(appFileModel)}" id="fileTotal" />
+									<div id="fileTemplateList">
+										<div th:id="fileTemplate+${count.index}" th:each="file,count : ${appFileModel}" style="margin:0px;">
+											<input type="hidden" id="fileName" name="fileName" th:value="${file.fileName}" />  
+											<img th:id="${count.index}" name="deleteFile" class="delete" th:src="@{/res/img/icon/delete.png}" th:action="@{/admin/applications/file/}" style="cursor:pointer;" /> 
+											<a  th:href="@{/userrequest/appTemplate('fileName'=${file.fileName},'filePath'=${file.filePath})}" th:text="${file.fileName}"></a> 
+										</div>
+									</div>
+									<label th:utext="#{application.label.application.file.warn}"></label>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label " th:utext="#{application.label.application.status.star}"></label>
+								<div class="col-md-4">
+									<label class="radio-inline"> <input type="radio"
+										name="status" value="1"
+										th:checked="${applicationModel.status}=='1'">
+										<span th:utext="#{application.label.active}"></span>
+									</label>
+									<label class="radio-inline"> <input type="radio"
+										name="status" value="2"
+										th:checked="${applicationModel.status}=='2'"> 
+										<span th:utext="#{application.label.inactive}"></span>
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="btn-panel col-md-12 text-center">
+									<button type="button" name="saveBtn" class="btn btn-green">Save</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- end application -->
+		
+		<div class="row"><div class="col-md-12"><hr class="hr-line"></div></div>
+		
+		<!-- Role Application -->
+		<div class="row">
+			<div id="rolePanel" class="col-md-12">
+				<div class="col-md-12" >
+					<div class="pull-left">
+						<span class="font-label-title" th:utext="#{common.label.role.application}"></span>
+						<button class="header-content-approle btn-icon-edit btn glyphicon glyphicon-cog"></button>
+					</div>
+					<div class="action-panel pull-right">
+						<button class="btn btn-green hide" name="openAppRoleDialog" th:utext="#{common.button.add}"></button>
+					</div>
+				</div>
+				<div class="body-content content-roleapp">
+					<table name="roleTable" class="table table-hover">
+						<thead>
+							<tr class="table-header-color">
+								<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+								<th class="col-data" th:utext="#{application.table.title.role.app}">Role Name</th>
+								<th class="col-data" th:utext="#{application.table.title.role.desc}">Role Desc</th>
+								<th class="col-action" th:utext="#{application.table.title.action}">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="tr0" style="display: none;">
+								<td class="col-no" data-idx></td>
+								<td class="col-data" data-rolename></td>
+								<td class="col-data" data-roledesc></td>
+								<td class="col-data">
+									<input type="hidden" name="appRoleId" th:action="@{/admin/applications/approle}"></input>
+									<button type="button" class="editBtn btn btn-green">Edit</button>
+									<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+								</td>
+							</tr>
+							<tr th:each="appRole,idx : ${applicationRoleModel}">
+								<td class="col-no" th:text="${idx.index}+1"></td>
+								<td class="col-data" name="appRoleName" th:text="${appRole.appRoleName}"></td>
+								<td class="col-data" name="appRoleDesc" th:text="${appRole.appRoleDesc}"></td>
+								<td class="col-action">
+									<input type="hidden" name="appRoleId" th:action="@{/admin/applications/approle}" th:value="${appRole.appRoleId}"></input>
+									<button th:if="${appRole.appRoleName}!='Default'" type="button" class="editBtn btn btn-green">Edit</button>
+									<button th:if="${appRole.appRoleName}!='Default'" type="button" class="deleteBtn btn btn-danger">Delete</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div id="roleApplicationDialog" class="dialog" title="Role Application">
+				<form class="form-horizontal" id="roleApplicationForm"
+					name="roleApplicationForm">
+					<br>
+					<div class="col-md-1"></div>
+					<div class="col-md-10">
+
+						<div class="form-group">
+							<input type="hidden" name="appRoleId"></input>
+							<label class="col-md-3 control-label font-label "
+								th:utext="#{application.label.role.name}"></label>
+							<div class="col-md-8">
+								<input class="form-control" name="roleName"></input> <input
+									type="hidden" class="form-control" name="idx"></input>
+							</div>
+							<div class="col-md-offset-3 col-md-9">
+								<font class="control-label font-label" color="red" name="appRoleErrorMsg" th:utext="#{application.error.approle}"></font>
+								<font class="control-label font-label" color="red" name="appRoleNullMsg" th:utext="#{application.error.approle.null}"></font>
+								<font class="control-label font-label" color="red" name="appRoleLengthMsg" th:utext="#{common.error.length.100}"></font>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label "
+								th:utext="#{application.label.role.description}"></label>
+							<div class="col-md-8">
+								<textarea class="form-control" name="roleDesc" rows="3"></textarea>
+							</div>
+							<div class="col-md-offset-3 col-md-9">
+								<font class="control-label font-label" color="red" name="appRoleDescLengthMsg" th:utext="#{common.error.length.250}"></font>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label font-label "></label>
+							<div class="col-md-8">
+								<font color="red" name="textError"></font>
+							</div>
+						</div>
+						<div class="btn-dialog-panel btn-panel col-md-12 text-center">
+							<button type="button" name="saveBtn" class="btn btn-green" th:action="@{/admin/applications/approle}">Save</button>
+							<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+						</div>
+						<div class="form-group">
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+				</form>
+			</div>
+		</div>
+		<!-- End Role Application -->
+		
+		<div class="row"><div class="col-md-12"><hr class="hr-line"></div></div>
+		
+		<!-- Eligible -->
+		<div class="row">
+			<div id="eligiblePanel" class="col-md-12">
+				<div name="reloadEligible" th:action="@{/admin/applications/eligible}"></div>
+				<div class="col-md-12">
+					<div class="pull-left">
+						<span class="font-label-title" th:utext="#{application.label.eligible}"></span>
+						<button class="header-content-eligible btn-icon-edit btn glyphicon glyphicon-cog"></button>
+					</div>
+					<div class="action-panel pull-right">
+						<button class="btn btn-green hide" name="openEligibleDialog" th:utext="#{common.button.add}"></button>
+					</div>
+				</div>
+				<div class="body-content content-eligible">
+				<table name="eligibleTable" class="table table-hover">
+					<thead>
+						<tr class="table-header-color">
+							<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+							<th class="col-data" th:utext="#{application.table.title.org.name}">Org name</th>
+							<th class="col-data" th:utext="#{application.table.title.role.app}">Role Name</th>
+							<th class="col-action" th:utext="#{application.table.title.action}">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="tr0" style="display: none;">
+							<td class="col-no" data-idx></td>
+							<td class="col-data" data-orgname></td>
+							<td class="col-data" data-role></td>
+							<td class="col-action">
+								<button type="button" class="editBtn btn btn-green">Edit</button>
+								<button type="button" class="deleteBtn btn btn-danger" th:action="@{/admin/eligible/id/list}">Delete</button>
+							</td>
+						</tr>
+						<tr th:each="eligible,idx : ${eligibleModel}">
+							<td class="col-no" th:text="${idx.index}+1"></td>
+							<td class="col-data" th:text="${eligible.orgdesc}" name="orgname"></td>
+							<td class="col-data">
+								<input type="hidden" name="orgcode" th:value="${eligible.orgcode}"/>
+								<span name="eligibleSpan" th:each=" role,i : ${eligible.eligible}"> 
+									<input type="hidden" name="eligibleId" th:value="${role.eligibleId}"/>
+									<input type="hidden" name="appRoleId" th:value="${role.appRoleId}"/>
+									<span th:text="(${i.index}+1)+'. '"></span> 
+									<span th:text="${role.appRoleName}" name="appRoleName"></span><br>
+								</span>
+							</td>
+							<td class="col-action">
+								<button type="button" class="editBtn btn btn-green">Edit</button>
+								<button type="button" class="deleteBtn btn btn-danger" th:action="@{/admin/eligible/id/list}">Delete</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				</div>
+				<div id="eligibleDialog" class="dialog" title="Eligible">
+					<form class="form-horizontal" id="eligibleForm" name="eligibleForm">
+						<br>
+							<div name="eligibleOrgPanel" class="col-md-6">
+							<div class="form-group">
+								<label class="col-md-4 control-label font-label" th:utext="#{application.label.eligible.orgname}"></label>
+								<div class="col-md-7">
+									<input class="form-control auto-orgname" name="orgNameShow"
+										th:action="@{/admin/eligible/autocomplete/orgdesc}"></input> 
+										<input type="hidden" class="form-control" name="idx"></input> 
+										<input type="hidden" class="form-control" name="orgname"></input> 
+										<input type="hidden" class="form-control" name="orgcode"></input>
+								</div>
+								<div class="col-md-offset-4 col-md-7">
+									<font class="control-label font-label" color="red" name="orgNameErrorMsg" th:utext="#{application.error.orgname}"></font>
+									<font class="control-label font-label" color="red" name="orgNameNullMsg" th:utext="#{application.error.orgname.null}"></font>
+									<font class="control-label font-label" color="red" name="orgNamePickMsg" th:utext="#{application.error.orgname.pick}"></font>
+								</div>
+							</div>
+							<div class="col-md-1"></div>
+							<div name="eligibleAddOrgPanel" class="col-md-12">
+									<div class="btn-form-panel btn-panel form-group text-center">
+									<button type="button" name="addOrgBtn" class="btn btn-green">Add</button>
+									<button type="button" name="resetOrgBtn" class="btn btn-grey">Reset</button>
+								</div>
+								<table name="organizeTable" class="table table-hover">
+									<thead>
+										<tr class="table-header-color">
+											<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+											<th class="col-data" th:utext="#{application.table.title.org.name}"></th>
+											<th class="col-action" th:utext="#{application.table.title.action}">Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="tr0" style="display: none;">
+											<td class="col-no" data-idx></td>
+											<td class="col-data" data-orgname></td>
+											<td class="col-action">
+												<button type="button" class="deleteOrgBtn btn btn-danger">Delete</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						
+						<div name="eligibleRolePanel" class="col-md-6">
+							<div class="form-group">
+								<label class="col-md-4 control-label font-label" th:utext="#{application.label.role}"></label>
+								<div class="col-md-7">
+									<select name="roleName" class="form-control">
+										<option class="option0" style="display: none"></option>
+									</select>
+								</div>
+								<div class="col-md-offset-4 col-md-7">
+									<font class="control-label font-label" color="red" name="appRoleErrorMsg" th:utext="#{application.error.approle}"></font>
+									<font class="control-label font-label" color="red" name="appRoleNoItemMsg" th:utext="#{application.error.approle.noitem}"></font>
+								</div>
+							</div>
+							<div class="col-md-1"></div>
+							<div class="col-md-12">
+								<div class="btn-form-panel btn-panel form-group text-center">
+									<button type="button" name="addRoleBtn" class="btn btn-green">Add</button>
+									<button type="button" name="resetRoleBtn" class="btn btn-grey">Reset</button>
+								</div>
+								<table name="roleEligibleTable" class="table table-hover">
+									<thead>
+										<tr class="table-header-color">
+											<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+											<th class="col-data" th:utext="#{application.table.title.role.app}"></th>
+											<th class="col-action" th:utext="#{application.table.title.action}">Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="tr0" style="display: none;">
+											<td class="col-no" data-idx></td>
+											<td class="col-data" data-rolename></td>
+											<td class="col-action">
+												<button type="button" class="deleteRoleBtn btn btn-danger">Delete</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="btn-dialog-panel btn-panel col-md-12 text-center">
+							<button type="button" name="saveBtn" class="btn btn-green" th:action="@{/admin/applications/eligible}">Save</button>
+							<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+						</div>
+						<div class="col-md-12">
+							<br>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- End Eligible -->
+
+		<div class="row"><div class="col-md-12"><hr class="hr-line"></div></div>
+		
+		<!-- AppOwner -->
+		<div class="row">
+			<div id="appOwnerPanel" class="col-md-12" th:action="@{/admin/applications/appowner}">
+				<div class="col-md-12">
+					<div class="pull-left">
+						<span class="font-label-title" th:utext="#{common.label.appowner}"></span>
+						<button class="header-content-appowner btn-icon-edit btn glyphicon glyphicon-cog"></button>
+					</div>
+					<div class="action-panel pull-right">
+						<button class="btn btn-green hide" name="show" th:utext="#{common.button.add}"></button>
+					</div>
+				</div>
+				<div class="body-content content-appowner">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-offset-2 col-md-2 control-label font-label " th:utext="#{application.label.appowner.type}"></label>
+							<div class="col-md-4">
+								<label class="radio-inline"> <input type="radio"
+									name="appOwnerType" value="person"
+									th:checked="${appOwnerModel.appOwnerType}=='person'">
+									Personal
+								</label> <label class="radio-inline"> <input type="radio"
+									name="appOwnerType" value="team"
+									th:checked="${appOwnerModel.appOwnerType}=='team'"> Team
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-offset-2 col-md-2 control-label font-label " th:utext="#{application.label.approve.type}"></label>
+							<div name="appPersonApproveType" class="col-md-7">
+								<label class="radio-inline"> <input type="radio"
+									name="appPersonApproveType" value="1"
+									th:checked="${appOwnerModel.appOwnerApproveType}=='1'">
+									<span th:utext="#{application.label.all}"></span>
+								</label> 
+								<label class="radio-inline"> <input type="radio"
+									name="appPersonApproveType" value="2"
+									th:checked="${appOwnerModel.appOwnerApproveType}=='2'">
+									<span th:utext="#{application.label.minimum}"></span>
+								</label> 
+								<label class="radio-inline"> <input type="radio"
+									name="appPersonApproveType" value="3"
+									th:checked="${appOwnerModel.appOwnerApproveType}=='3'">
+									<span th:utext="#{application.label.sequence}"></span>
+								</label>
+							</div>
+							<div name="appTeamApproveType" class="col-md-4">
+								<label class="radio-inline"> <input type="radio"
+									name="appTeamApproveType" value="4"
+									th:checked="${appOwnerModel.appOwnerApproveType}=='4'" >
+									<span th:utext="#{application.label.sequence.team}"></span>
+								</label> 
+								<label class="radio-inline"> <input type="radio"
+									name="appTeamApproveType" value="5"
+									th:checked="${appOwnerModel.appOwnerApproveType}=='5'"> 
+									<span th:utext="#{application.label.parallel.team}"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+					
+					<div name="minimum" class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-offset-2 col-md-2 control-label font-label " th:utext="#{application.label.custodian.minimum}"></label>
+							<div class="col-md-1">
+								<input type="number" name="minimum" class="form-control" min="1"
+									max="1" th:value="${appOwnerModel.appOwnerMinimum}"></input>
+							</div>
+						</div>
+					</div>
+		
+					<div class="col-md-12">
+						<div class="row"><br></div>
+						<font class="control-label font-label" color="red" name="appOwnerNullMsg" th:utext="#{application.error.appowner.null}"></font>
+						<table name="appOwnerPersonTable" class="table table-hover">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+									<th class="col-data" th:utext="#{application.table.title.username}">Username</th>
+									<th class="col-data" th:utext="#{application.table.title.name}">Name</th>
+									<th class="col-action" th:utext="#{application.table.title.sort}">Sort</th>
+									<th class="col-action" th:utext="#{application.table.title.action}">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="tr0" style="display: none;">
+									<td class="col-no" data-idx></td>
+									<td class="col-data" data-username></td>
+									<td class="col-data" data-enfullname></td>
+									<td class="col-action">
+										<input type="hidden" name="userId"></input>
+										<button class="upBtn glyphicon glyphicon-triangle-top"
+											aria-hidden="true"></button>
+										<button class="downBtn glyphicon glyphicon-triangle-bottom"
+											aria-hidden="true"></button>
+									<td class="col-action">
+										<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+									</td>
+								</tr>
+		
+								<tr th:each="appOwner,idx : ${appOwnerModel.appOwnerList}">
+									<td class="col-no" name="idx" th:text="${idx.index}+1"></td>
+									<td class="col-data" name="username" th:text="${appOwner.username}"></td>
+									<td  class="col-data"name="enfullname" th:text="${appOwner.enfullname}"></td>
+									<td class="col-data">
+										<input type="hidden" name="userId" th:value="${appOwner.userId}"></input>
+										<button th:disabled="${idx.first}" class="upBtn glyphicon glyphicon-triangle-top"
+											aria-hidden="true"></button>
+										<button th:disabled="${idx.last}" class="downBtn glyphicon glyphicon-triangle-bottom"
+											aria-hidden="true"></button>
+									<td class="col-data">
+										<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table name="appOwnerTeamTable" class="table table-hover">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+									<th class="col-data" th:utext="#{application.table.title.team}">Team</th>
+									<th class="col-data" th:utext="#{application.table.title.member}">Member</th>
+									<th class="col-action" th:utext="#{application.table.title.sort}">Sort</th>
+									<th class="col-action" th:utext="#{application.table.title.action}">Action</th>		
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="tr0" style="display: none;">
+									<td class="col-no" data-idx></td>
+									<td class="col-data" data-teamname></td>
+									<td class="col-data" data-teammember></td>
+									<td class="col-action">
+										<button class="upBtn glyphicon glyphicon-triangle-top"
+											aria-hidden="true"></button>
+										<button class="downBtn glyphicon glyphicon-triangle-bottom"
+											aria-hidden="true"></button>
+									</td>
+									<td class="col-action">
+										<button type="button" class="editBtn btn btn-green">Edit</button>
+										<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+									</td>
+								</tr>
+								<tr th:each="appOwnerTeam,idx : ${appOwnerModel.appOwnerTeamList}">
+									<td class="col-no" th:text="${idx.index}+1"></td>
+									<td class="col-data" th:text="${appOwnerTeam.appOwnerTeamId}"
+										style="display: none;"></td>
+									<td class="col-data" name="teamName" th:text="${appOwnerTeam.teamName}"></td>
+									<td class="col-data">
+										<span name="appOwnerMemberSpan" th:each=" member,i : ${appOwnerTeam.appOwnerMemberList}">
+											<span th:text="${i.index}+1+'. '"></span> 
+											<input type="hidden" name="username" th:value="${member.username}"/>
+											<input type="hidden" name="userId" th:value="${member.userId}"/>
+											<span name="enfullname" th:text="${member.enfullname}"></span>
+											<br>
+										</span>
+									</td>
+									<td class="col-data">
+										<button class="upBtn glyphicon glyphicon-triangle-top"
+											aria-hidden="true"></button>
+										<button class="downBtn glyphicon glyphicon-triangle-bottom"
+											aria-hidden="true"></button>
+									</td>
+									<td class="col-data">
+										<button type="button" class="editBtn btn btn-green">Edit</button>
+										<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="text-center">
+					<button class="btn btn-green hide" name="saveBtn" th:utext="#{common.button.save}"></button>
+				</div>
+				
+				<div id="appOwnerPersonDialog" class="dialog" title="Personal">
+					<form class="form-horizontal" id="appOwnerPersonForm"
+						name="appOwnerPersonForm">
+						<br>
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label "  th:utext="#{application.label.user}"></label>
+								<div class="col-md-8">
+									<input class="form-control auto-username-fullname"
+										name="usernameShow"
+										th:action="@{/admin/applications/autocomplete/username}"></input>
+									<input type="hidden" name="username"></input> 
+									<input type="hidden" name="name"></input>
+									<input type="hidden" name="userId"></input>
+								</div>
+							</div>
+							<div class="form-group" name="showSelectUser">
+								<label class="col-md-3 control-label font-label"></label>
+								<div class="col-md-8">
+									<span>Selected : </span><span name="selectUser"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label"></label>
+								<div class="col-md-8">
+									<font class="control-label font-label" color="red" name="userErrorMsg" th:utext="#{application.error.user}"></font>
+									<font class="control-label font-label" color="red" name="userNullMsg" th:utext="#{application.error.user.null}"></font>
+									<font class="control-label font-label" color="red" name="userPickMsg" th:utext="#{application.error.user.pick}"></font>
+								</div>
+							</div>
+							<div class="btn-form-panel btn-panel form-group text-center">
+								<button type="button" name="addBtn" class="btn btn-green">Add</button>
+								<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
+					</form>
+				</div>
+	
+				<div id="appOwnerTeamDialog" class="dialog" title="Team">
+					<form class="form-horizontal" id="appOwnerTeamForm"
+						name="appOwnerTeamForm">
+						<br>
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<div class="form-group">
+								<input type="hidden" class="form-control" name="idx"></input> <label
+									class="col-md-3 control-label font-label " th:utext="#{application.label.teamname}"></label>
+								<div class="col-md-8">
+									<input class="form-control" name="teamName"></input>
+								</div>
+								<div class="col-md-offset-3 col-md-8">
+									<font class="control-label font-label" color="red" name="teamNameNullMsg" th:utext="#{application.error.team.null}"></font>
+									<font class="control-label font-label" color="red" name="teamNameErrorMsg" th:utext="#{application.error.team}"></font>
+									<font class="control-label font-label" color="red" name="teamNameLengthMsg" th:utext="#{common.error.length.100}"></font>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label " th:utext="#{application.label.username}"></label>
+								<div class="col-md-8">
+									<input class="form-control auto-username-fullname"
+										name="usernameShow"
+										th:action="@{/admin/applications/autocomplete/username}"></input>
+									<input type="hidden" name="username"></input> 
+									<input type="hidden" name="name"></input>
+									<input type="hidden" name="userId"></input>
+								</div>
+							</div>
+							<div class="form-group" name="showSelectUser">
+								<label class="col-md-3 control-label font-label"></label>
+								<div class="col-md-8">
+									<span>Selected : </span><span name="selectUser"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-3 control-label font-label"></label>
+								<div class="col-md-8">
+									<font class="control-label font-label" color="red" name="userErrorMsg" th:utext="#{application.error.user}"></font>
+									<font class="control-label font-label" color="red" name="userNullMsg" th:utext="#{application.error.user.null}"></font>
+									<font class="control-label font-label" color="red" name="userPickMsg" th:utext="#{application.error.user.pick}"></font>
+								</div>
+							</div>
+							<div class="btn-form-panel btn-panel form-group text-center">
+								<button type="button" name="addBtn" class="btn btn-green">Add</button>
+								<button type="button" name="resetBtn" class="btn btn-grey">Reset</button>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
+						<div class="col-md-12">
+							<div class="font-label-sub-title h2 pull-left">
+								<div th:utext="#{application.label.member}"></div>
+							</div>
+							<table name="personTeamTable" class="table table-hover">
+								<thead>
+									<tr class="table-header-color">
+										<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+										<th class="col-data" th:utext="#{application.table.title.username}">Username</th>
+										<th class="col-data" th:utext="#{application.table.title.name}">Name</th>
+										<th class="col-action" th:utext="#{application.table.title.action}">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="tr0" style="display: none;">
+										<td class="col-no" data-idx></td>
+										<td class="col-data" data-username></td>
+										<td class="col-data" data-enfullname></td>
+										<td class="col-action">
+											<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="btn-dialog-panel btn-panel col-md-12 text-center">
+							<button type="button" name="saveBtn" class="btn btn-green">Save</button>
+							<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- end app owner -->
+		
+		<div class="row"><div class="col-md-12"><hr class="hr-line"></div></div>
+		
+		<!-- Custodian -->
+		<div class="row">
+			<div id="custodianPanel" class="col-md-12" th:action="@{/admin/applications/custodian}">
+				<div class="col-md-12">
+					<div class="pull-left">
+						<span class="font-label-title" th:utext="#{common.label.custodian}"></span>
+						<button class="header-content-custodian btn-icon-edit btn glyphicon glyphicon-cog"></button>
+					</div>
+					<div class="action-panel pull-right">
+						<button class="btn btn-green hide" name="show" th:utext="#{common.button.add}"></button>
+					</div>
+				</div>
+				<div class="body-content content-custodian">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-offset-2 col-md-2 control-label font-label " th:utext="#{application.label.custodian.type}"></label>
+							<div class="col-md-4">
+								<label class="radio-inline"> <input type="radio"
+									name="custodianType" value="person"
+									th:checked="${custodianModel.custodianType}=='person'">
+									Personal
+								</label> <label class="radio-inline"> <input type="radio"
+									name="custodianType" value="team"
+									th:checked="${custodianModel.custodianType}=='team'">
+									Team
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-offset-2 col-md-2 control-label font-label "  th:utext="#{application.label.approve.type}"></label>
+							<div name="cusPersonApproveType" class="col-md-7">
+								<label class="radio-inline"> 
+								<input type="radio"
+									name="cusPersonApproveType" value="1"
+									th:checked="${custodianModel.custodianApproveType}=='1'" 
+									th:utext="#{application.label.all}">
+								</label> <label class="radio-inline"> <input type="radio"
+									name="cusPersonApproveType" value="2"
+									th:checked="${custodianModel.custodianApproveType}=='2'" 
+									th:utext="#{application.label.minimum}">
+								</label> <label class="radio-inline"> <input type="radio"
+									name="cusPersonApproveType" value="3"
+									th:checked="${custodianModel.custodianApproveType}=='3'" 
+									th:utext="#{application.label.sequence}">
+								</label>
+							</div>
+							<div name="cusTeamApproveType" class="col-md-4">
+								<label class="radio-inline"> <input type="radio"
+									name="cusTeamApproveType" value="4"
+									th:checked="${custodianModel.custodianApproveType}=='4'" 
+									th:utext="#{application.label.sequence.team}">
+								</label> <label class="radio-inline"> <input type="radio"
+									name="cusTeamApproveType" value="5"
+									th:checked="${custodianModel.custodianApproveType}=='5'" 
+									th:utext="#{application.label.parallel.team}">
+								</label>
+							</div>
+						</div>
+					</div>
+					<div name="minimum" class="col-md-12">
+						<div class="form-group">
+							<label class="col-md-offset-2 col-md-2 control-label font-label " th:utext="#{application.label.custodian.minimum}"></label>
+							<div class="col-md-1">
+								<input type="number" name="minimum" class="form-control" min="1"
+									max="1"  th:value="${custodianModel.custodianMinimum}"></input>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="row"><div class="col-md-12"><br></div></div>
+						<div class="col-md-12 nav-above-table">
+							<div class="navigation navi-left">
+							<ul>
+								<B th:utext="#{application.label.custodian.user.type}"></B>
+								<li ><a class="nav-menu-bar link-active" href="" value="1"
+										name="default-nav" id="nav-btn">Default(0)</a></li>
+									<li><a class="nav-menu-bar" href="" name="backoffice-nav"
+										value="2" id="nav-btn">Back Office(0) </a></li>
+									<li><a class="nav-menu-bar" href="" name="acc-nav" value="3"
+										id="nav-btn">ACC(0) </a></li>
+									<li><a class="nav-menu-bar" href="" name="branch-nav"
+										value="4" id="nav-btn">Branch(0) </a></li>
+									<li><a class="nav-menu-bar" href="" name="outlet-nav"
+										value="5" id="nav-btn">Outlet(0) </a></li>
+							</ul>
+							
+							</div>
+						</div>
+						<div class="col-md-12"></div>
+					</div>
+					
+					<div class="col-md-12">
+						<font class="control-label font-label" color="red" name="custodianNullMsg" th:utext="#{application.error.custodian.null}"></font>
+					</div>
+					<div name="custodianTablePanel" class="col-md-12">
+						<table name="custodianPersonTable" class="table table-hover">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+									<th class="col-data" th:utext="#{application.table.title.username}">Username</th>
+									<th class="col-data" th:utext="#{application.table.title.name}">Name</th>
+									<th class="col-action" th:utext="#{application.table.title.sort}">Sort</th>	
+									<th class="col-action" th:utext="#{application.table.title.action}">Action</th>	
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="tr0" style="display: none;">
+									<td class="col-no" data-idx></td>
+									<td class="col-data" data-username></td>
+									<td class="col-data" data-enfullname></td>
+									<td class="col-action">
+										<input type="hidden" name="userId"></input>
+										<button class="upBtn glyphicon glyphicon-triangle-top"></button>
+										<button class="downBtn glyphicon glyphicon-triangle-bottom"></button>
+									<td class="col-action">
+										<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table name="custodianTeamTable" class="table table-hover">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+									<th class="col-data" th:utext="#{application.table.title.team}">Username</th>
+									<th class="col-data" th:utext="#{application.table.title.member}">Name</th>
+									<th class="col-action" th:utext="#{application.table.title.sort}">Sort</th>	
+									<th class="col-action" th:utext="#{application.table.title.action}">Action</th>	
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="tr0" style="display: none;">
+									<td class="col-no" data-idx></td>
+									<td class="col-data" data-teamname></td>
+									<td class="col-data" data-teammember></td>
+									<td class="col-action">
+										<button class="upBtn glyphicon glyphicon-triangle-top"></button>
+										<button
+											class="downBtn glyphicon glyphicon-triangle-bottom"></button>
+									</td>
+									<td class="col-action">
+										<button type="button" class="editBtn btn btn-green">Edit</button>
+										<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="text-center">
+					<button class="btn btn-green hide" name="saveBtn" th:utext="#{common.button.save}"></button>
+				</div>
+			</div> 
+		</div>
+		<!-- End Custodian div -->
+		
+		<input name="custodianList" type="hidden" th:value="${custodianModel.objectToJson('custodianList')}"/>
+		<input name="custodianTeamList" type="hidden" th:value="${custodianModel.objectToJson('custodianTeamList')}"/>
+		<input name="custodianBackOfficeList" type="hidden" th:value="${custodianModel.objectToJson('custodianBackOfficeList')}"/>
+		<input name="custodianBackOfficeTeamList" type="hidden" th:value="${custodianModel.objectToJson('custodianBackOfficeTeamList')}"/>
+		<input name="custodianACCList" type="hidden" th:value="${custodianModel.objectToJson('custodianACCList')}"/>
+		<input name="custodianACCTeamList" type="hidden" th:value="${custodianModel.objectToJson('custodianACCTeamList')}"/>
+		<input name="custodianBranchList" type="hidden" th:value="${custodianModel.objectToJson('custodianBranchList')}"/>
+		<input name="custodianBranchTeamList" type="hidden" th:value="${custodianModel.objectToJson('custodianBranchTeamList')}"/>
+		<input name="custodianOutletList" type="hidden" th:value="${custodianModel.objectToJson('custodianOutletList')}"/>
+		<input name="custodianOutletTeamList" type="hidden" th:value="${custodianModel.objectToJson('custodianOutletTeamList')}"/>
+		
+		<!-- start dialog -->
+		<!-- Personal -->
+		<div id="custodianPersonDialog" class="dialog" title="Personal">
+			<form class="form-horizontal" id="custodianPersonForm"
+				name="custodianPersonForm">
+				<br>
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="form-group">
+						<label class="col-md-3 control-label font-label " th:utext="#{application.label.user}"></label>
+						<div class="col-md-8">
+							<input class="form-control auto-username-fullname"
+								name="usernameShow"
+								th:action="@{/admin/applications/autocomplete/username}"></input>
+							<input type="hidden" name="username"></input> 
+							<input type="hidden" name="name"></input>
+							<input type="hidden" name="userId"></input>
+						</div>
+					</div>
+					<div class="form-group" name="showSelectUser">
+						<label class="col-md-3 control-label font-label"></label>
+						<div class="col-md-8">
+							<span>Selected : </span><span name="selectUser"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label font-label"></label>
+						<div class="col-md-8">
+							<font class="control-label font-label" color="red" name="userErrorMsg" th:utext="#{application.error.user}"></font>
+							<font class="control-label font-label" color="red" name="userNullMsg" th:utext="#{application.error.user.null}"></font>
+							<font class="control-label font-label" color="red" name="userPickMsg" th:utext="#{application.error.user.pick}"></font>
+						</div>
+					</div>
+					<div class="btn-form-panel btn-panel form-group text-center">
+						<button type="button" name="addBtn" class="btn btn-green">Add</button>
+						<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</form>
+		</div>
+
+		<div id="custodianTeamDialog" class="dialog" title="Team">
+			<form class="form-horizontal" id="custodianTeamForm"
+				name="custodianTeamForm">
+				<br>
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="form-group">
+						<input type="hidden" class="form-control" name="idx"></input> <label
+							class="col-md-3 control-label font-label "  th:utext="#{application.label.teamname}"></label>
+						<div class="col-md-8">
+							<input class="form-control" name="teamName"></input>
+						</div>
+						<div class="col-md-offset-3 col-md-8">
+							<font class="control-label font-label" color="red" name="teamNameNullMsg" th:utext="#{application.error.team.null}"></font>
+							<font class="control-label font-label" color="red" name="teamNameErrorMsg" th:utext="#{application.error.team}"></font>
+							<font class="control-label font-label" color="red" name="teamNameLengthMsg" th:utext="#{common.error.length.100}"></font>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label font-label "  th:utext="#{application.label.user}"></label>
+						<div class="col-md-8">
+							<input class="form-control auto-username-fullname"
+								name="usernameShow"
+								th:action="@{/admin/applications/autocomplete/username}"></input>
+							<input type="hidden" name="username"></input> 
+							<input type="hidden" name="name"></input>
+							<input type="hidden" name="userId"></input>
+						</div>
+					</div>
+					<div class="form-group" name="showSelectUser">
+						<label class="col-md-3 control-label font-label"></label>
+						<div class="col-md-8">
+							<span>Selected : </span><span name="selectUser"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-3 control-label font-label"></label>
+						<div class="col-md-8">
+							<font class="control-label font-label" color="red" name="userErrorMsg" th:utext="#{application.error.user}"></font>
+							<font class="control-label font-label" color="red" name="userNullMsg" th:utext="#{application.error.user.null}"></font>
+							<font class="control-label font-label" color="red" name="userPickMsg" th:utext="#{application.error.user.pick}"></font>
+						</div>
+					</div>
+					<div class="btn-form-panel btn-panel form-group text-center">
+						<button type="button" name="addBtn" class="btn btn-green">Add</button>
+						<button type="button" name="resetBtn" class="btn btn-grey">Reset</button>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+				<div class="col-md-12">
+					<div class="font-label-sub-title h2 pull-left">
+						<div th:utext="#{application.label.member}"></div>
+					</div>
+					<table name="personTeamTable" class="table table-hover">
+						<thead>
+							<tr class="table-header-color">
+								<th class="col-no" th:utext="#{application.table.title.no}">#</th>
+								<th class="col-data" th:utext="#{application.table.title.username}">Username</th>
+								<th class="col-data" th:utext="#{application.table.title.name}">Name</th>
+								<th class="col-action" th:utext="#{application.table.title.action}">Action</th>	
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="tr0" style="display: none;">
+								<td class="col-no" data-idx></td>
+								<td class="col-data" data-username></td>
+								<td class="col-data" data-enfullname></td>
+								<td class="col-action">
+									<button type="button" class="deleteBtn btn btn-danger">Delete</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="btn-dialog-panel btn-panel col-md-12 text-center">
+					<button type="button" name="saveBtn" class="btn btn-green">Save</button>
+					<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="row"><div class="col-md-12"><br></div></div>
+		<div class="row"><div class="col-md-12"><br></div></div>
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript"
+	th:src="@{/res/js/views/admin/flowconfig/formadd.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content">
+	<form class="form-horizontal" id="searchForm" name="searchForm" th:action="@{/flowconfig/insert}" >
+		<div class="row">
+			<div class="col-md-2">Flow</div>
+		</div>
+		<div class="row">
+			 <div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Flow Name</label>
+									<div class="col-md-5">
+										<input value="" class="form-control" id="flowname" name="flowname"></input>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+			  </div>
+			  <div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Flow Description</label>
+									<div class="col-md-5">
+										<textarea rows="4" class="form-control" id="flowname" name="flowname"></textarea>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+			  </div>
+			  <div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Flow Type</label>
+									<div class="col-md-5">
+										<select id="flowtype" name="flowtype" class="input-select">
+											<option value="" selected="selected" class="text-center">--------------------------------------------- กรุณาเลือก ---------------------------------------------</option>
+											<option value="1" class="text-center">New Standard</option>
+											<option value="2" class="text-center">New Special</option>
+											<option value="3" class="text-center">Terminate Standard</option>
+											<option value="4" class="text-center">Terminate Special</option>
+											<option value="5" class="text-center">Change Standard</option>
+											<option value="6" class="text-center">Change Special</option>
+										</select>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">User Type</label>
+									<div class="col-md-5">
+										<select id="usertype" name="usertype" class="input-select">
+											<option value="" selected="selected" class="text-center">--------------------------------------------- กรุณาเลือก ---------------------------------------------</option>
+											<option value="1" class="text-center">ACC</option>
+											<option value="2" class="text-center">Branch</option>
+											<option value="3" class="text-center">Outlet</option>
+											<option value="4" class="text-center">Back-Office</option>
+										</select>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="col-md-4">Node</div>
+				<div class="col-md-8">
+					<div class="flownode-Manager flow-node">
+						<button id="node-manager" type="button" value="flownode-Manager" class="btn-add-node btn btn-default btn-xs">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true">
+						</span>
+						<span class="node-name">
+							Manager
+						</span>
+						</button>
+					</div>
+					<div class="flownode-Custodian flow-node">
+						<button id="node-custodian" type="button" value="flownode-Custodian" class="btn-add-node btn btn-default btn-xs">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true">
+						</span>
+						<span class="node-name">
+								Custodian
+						</span>
+						</button>
+						
+					</div>
+					<div class="flownode-Appowner flow-node">
+						<button id="node-appowner" type="button" value="flownode-Appowner" class="btn-add-node btn btn-default btn-xs">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true">
+						</span>
+						<span class="node-name">
+								Appownder
+						</span>
+						</button>
+						
+					</div>
+					<div class="flownode-Role flow-node">
+						<button id="node-roleiden" type="button" value="flownode-Role" class="btn-add-node btn btn-default btn-xs">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true">
+						</span>
+						<span class="node-name">
+									Role Iden
+						</span>
+						</button>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-4">
+				Flow Display
+				</div>
+				<div class="flow-panel col-md-8">
+					<div class="flow-list">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+				<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Node Name</label>
+									<div class="col-md-5">
+										<select id="nodename" name="nodename" class="input-select">
+											<option value="" selected="selected" class="text-center">--------------------------------------------- กรุณาเลือก ---------------------------------------------</option>
+										</select>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+		</div>
+		</form>
+		<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<table id="jqGrid"></table>
+		    			<div id="jqGridPager"></div>
+		    			<a id="editUrl" style="display:none;">editUrl</a>		
+					</div>
+					<div class="col-md-2">
+					</div>
+		</div>
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

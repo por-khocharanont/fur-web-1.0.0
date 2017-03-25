@@ -1,0 +1,36 @@
+package th.co.ais.mimo.acim.web.service;
+
+import java.util.List;
+import java.util.Map;
+
+import th.co.ais.mimo.acim.web.model.RolePermission;
+import th.co.ais.mimo.acim.web.model.User;
+import th.co.ais.mimo.acim.web.model.UserMenu;
+import th.co.ais.mimo.acim.web.model.grid.UserApplicationInfoGridResponse;
+import th.co.ais.mimo.acim.web.model.grid.UserTokenInfoGridResponse;
+import th.co.ais.mimo.acim.web.repository.model.UserInfo;
+import th.co.ais.mimo.acim.web.service.exception.ServiceException;
+
+public interface UserService {
+	
+	public UserInfo authUser(String username, String password,String ipAddress) throws ServiceException;
+	
+	public User getProfile(String username) throws ServiceException;
+	
+	public User getProfileByUserId(String userId) throws ServiceException;
+	
+	public List<User> getUserByUsernameAndFullName(String username) throws ServiceException;
+	
+	public UserApplicationInfoGridResponse getApplicationByType(String type,Map<String,String> params,String username) throws ServiceException;
+
+	public int countApplicationByType(String type,String username) throws ServiceException;
+	
+	public int countTokenApplication(String username) throws ServiceException;
+	
+	public UserTokenInfoGridResponse getApplicationByUserToken(Map<String,String> params,String username) throws ServiceException;
+	
+	public UserMenu getUserMenu() throws ServiceException;
+	
+	public List<RolePermission> getRole() throws ServiceException;
+	
+}

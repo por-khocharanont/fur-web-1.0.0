@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Application</title>
+<script type="text/javascript"
+	th:src="@{/res/js/views/admin/application/application.search.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="navigation navi-left">
+				<ul>
+					<img th:src="@{/res/img/icon/admin_inactive.png}" height="42" width="42">
+					<B th:utext="#{common.label.adminpanel}"></B>
+					<li>
+						<a th:href="@{/admin/applications}" th:utext="#{common.label.app}" class ="link-active"></a>
+					</li>
+					<li>
+						<a th:href="@{/admin/eligible}" th:utext="#{common.label.eligible}"></a>
+					</li>
+				</ul>
+				<br>
+			</div>
+			<div class="col-md-12">
+			
+			<h1 class="font-label-title" th:utext="#{common.label.app}"></h1>
+			<hr class="hr-line">
+			
+				<form class="form-horizontal" id="searchApplicationForm" name="searchApplicationForm" th:action="@{/admin/applications/search}">
+					<div class="col-md-1"></div>
+					<div class="col-md-10">
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{application.label.application}"></label>
+							<div class="col-md-5">
+								<input class="form-control auto-appName" id="appName" maxlength="100" name="appName"></input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{common.label.role.application}"></label>
+							<div class="col-md-5">
+								<input class="form-control" maxlength="100" name="roleName"></input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{application.label.application.authen}"></label>
+							<div class="col-md-5">
+								<select class="form-control" name ="authenticationType">
+									<option value="0">All</option>
+									<option value="1">USB</option>
+									<option value="2">OTP</option>
+									<option value="3">Username/Password</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{application.label.application.type}"></label>
+							<div class="col-md-5">
+								<select class="form-control" name ="applicationType">
+									<option value="0" th:if="${session.SESSION_USER_ROLE}=='ADMIN-ACIM'">All</option>
+									<option value="1" th:if="${session.SESSION_USER_ROLE}=='ADMIN-ACIM'">Application</option>
+									<option value="2">Telecom</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{application.label.application.status}"></label>
+							<div class="col-md-4">
+								<label class="radio-inline"> <input type="radio"
+									name="status" value="0" checked> All
+								</label> <label class="radio-inline"> <input type="radio"
+									name="status" value="1"> Active
+								</label> <label class="radio-inline"> <input type="radio"
+									name="status" value="2"> Inactive
+								</label>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{common.label.appowner}"></label>
+							<div class="col-md-5">
+								<input class="form-control" maxlength="100" name="appOwnerName"></input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 col-md-offset-1 control-label" th:utext="#{common.label.custodian}"></label>
+							<div class="col-md-5">
+								<input class="form-control" maxlength="100" name="custodianName"></input>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="btn-panel col-md-12 text-center">
+								<button type="button" class="btn btn-green" id="searchBtn">Search</button>
+								<button type="reset" class="btn btn-grey">Reset</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+				</form>
+			</div>
+			<div class="col-md-12">
+				<div class="action-panel pull-right">
+					<a th:href="@{/admin/applications/create}"><button class="btn btn-green" type="button">Add</button></a>
+				</div>
+			</div>
+			<div class="row">
+			</div>
+			<div id="applicationTableGrid" class="tableGrid col-md-12">
+				<div name="dataNotFound" style="text-align: center;">
+					<br>
+					<font th:utext="#{common.data.not.found}"></font>
+					<br>
+				</div>
+				<div name="dataFound">
+					<table id="jqGrid"></table>
+	    			<div id="jqGridPager"></div>
+	    			<a id="editUrl" th:href="@{/admin/applications/edit/}" style="display:none;">editUrl</a>		
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

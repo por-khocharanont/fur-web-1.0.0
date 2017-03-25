@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Todo Lists</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" th:src="@{/res/js/views/todolists/todolists.detail.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="col-md-12">
+				<form class="form-horizontal" id="detailForm" name="detailForm">
+					<h1 class="font-label-title" th:utext="#{common.label.urdetail}"></h1>
+					<hr class="hr-line">
+					<div class="row">
+					<div class="col-md-offset-1 col-md-5">
+						<div class="row">
+							<label class="col-md-offset-1 col-md-5 control-label font-label " th:utext="#{todolist.label.urno}"></label>
+							<div class="col-md-6">
+								<p class="form-control-static" th:text="${userRequestDetailModel.urDetail.urId}"></p>
+								<input type="hidden" name="urId" th:value="${userRequestDetailModel.urDetail.urId}" ></input>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-offset-1 col-md-5 control-label font-label " th:utext="#{todolist.label.request.type}"></label>
+							<div class="col-md-6">
+								<p class="form-control-static" th:text="${userRequestDetailModel.urDetail.requestType}"></p>
+								<input type="hidden" name="requestType" th:value="${userRequestDetailModel.urDetail.requestType}"/>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-offset-1 col-md-5 control-label font-label " th:utext="#{todolist.label.app.name}"></label>
+							<div class="col-md-6">
+								<p class="form-control-static" th:text="${userRequestDetailModel.urDetail.appName}"></p>
+							</div>
+						</div>
+						
+						<div class="row">
+							<label class="col-md-offset-1 col-md-5 control-label font-label" 
+								th:if="${userRequestDetailModel.currentStep!='5'}"
+							 	th:utext="#{todolist.label.app.role}"></label>
+							<label class="col-md-offset-1 col-md-5 control-label font-label" 
+								th:if="${userRequestDetailModel.currentStep=='5' and userRequestDetailModel.urDetail.urDefault =='1'}"
+							 	th:utext="#{todolist.label.app.role.star}"></label> 
+							 <label class="col-md-offset-1 col-md-5 control-label font-label" 
+								th:if="${userRequestDetailModel.currentStep=='5' and userRequestDetailModel.urDetail.urDefault != '1'}"
+							 	th:utext="#{todolist.label.app.role}"></label>	
+							<div class="col-md-6" th:if="${userRequestDetailModel.currentStep}!='5'">
+								<p class="form-control-static" th:text="${userRequestDetailModel.urDetail.appRoleName}"></p>
+<!-- 								<input class="form-control no-border" name="appRoleName" th:value="${userRequestDetailModel.urDetail.appRoleName}" disabled></input> -->
+							</div>
+							<div class="col-md-6" th:if="${userRequestDetailModel.currentStep}=='5'">
+								<span th:if="${userRequestDetailModel.urDetail.urDefault} =='1'">
+									<select name="appRole" class="form-control">
+									    <option th:each="appRole : ${appRoleListModel}" th:value="${appRole.appRoleId}" th:text="${appRole.appRoleName}" th:selected="${appRole.appRoleName} == 'Default'"></option>
+									</select>
+								</span>
+								<span th:if="${userRequestDetailModel.urDetail.urDefault} !='1'">
+									<p class="form-control-static" th:text="${userRequestDetailModel.urDetail.appRoleName}"></p>
+								</span>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-offset-1 col-md-5 control-label font-label " th:if="${userRequestDetailModel.urDetail.periodType!=null}" th:utext="#{todolist.label.period}"></label>
+							<div class="col-md-6">
+								<p class="form-control-static" th:text="${userRequestDetailModel.urDetail.periodType}"></p>
+							</div>
+						</div>
+						<div class="row" th:if="${userRequestDetailModel.urDetail.periodType=='Temporary'}">
+							<label class="col-md-offset-1 col-md-5 control-label font-label " th:utext="#{ur.detail.label.start.date}"></label>
+							<div class="col-md-6">
+								<p class="form-control-static" th:text="${#dates.format(userRequestDetailModel.urDetail.startTime,'dd/MM/yyyy')}"></p>
+							</div>
+						</div>
+						<div class="row" th:if="${userRequestDetailModel.urDetail.periodType=='Temporary'}">
+							<label class="col-md-offset-1 col-md-5 control-label font-label " th:utext="#{ur.detail.label.end.date}"></label>
+							<div class="col-md-6">
+								<p class="form-control-static" th:text="${#dates.format(userRequestDetailModel.urDetail.endTime,'dd/MM/yyyy')}"></p>
+							</div>
+						</div>
+						
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+							<label class="col-md-4 control-label font-label " th:utext="#{todolist.label.request.no}"></label>
+							<div class="col-md-7">
+								<a th:href="@{/userrequest/requestno/detail/{requestNo}(requestNo=${userRequestDetailModel.requestNo.requestNo})}">
+									<font color='green'>
+										<u>
+											<p class="cursor-link form-control-static" name="requestNo" th:text="${userRequestDetailModel.requestNo.requestNo}"></p>
+										</u>
+									</font>
+									
+								</a>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-4 control-label font-label " th:utext="#{todolist.label.request.date}"></label>
+							<div class="col-md-7">
+								<p class="form-control-static" th:text="${#dates.format(userRequestDetailModel.requestNo.requestDate,'dd/MM/yyyy HH:mm:ss')}"></p>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-4 control-label font-label " th:utext="#{todolist.label.request.by}"></label>
+							<div class="col-md-7">
+								<p class="form-control-static" th:text="${userRequestDetailModel.requestNo.requestBy}"></p>
+							</div>
+						</div>
+					</div>
+					</div>
+					
+					<!-- FLOW -->
+					<div class="row"></div>
+					<br>
+					<br>
+					<h1 class="font-label-title" th:utext="#{common.label.flow}"></h1>
+					<hr class="hr-line">
+					<div class="col-md-12"><br><br></div>
+					<div class="col-md-12 ">
+						<div class="form-group flow-step-panel">
+							<input type="hidden" id="currentStep" th:value="${userRequestDetailModel.currentStep}"></input>
+							
+							<div class="bg-shadow flow-step-box flow-step-box-2">
+								<span>UR</span>
+							</div>
+							<div class="flow-step-arrow glyphicon glyphicon-arrow-right"></div>
+							
+							<div th:each="userRequest,idx : ${userRequestDetailModel.urStepList}">
+								<div th:class="'bg-shadow flow-step-box flow-step-box-'+ ${userRequest.status}">
+									<button name="showFlowDetail" th:value="${userRequest.urStep}" class="no-border"><span th:text="${userRequest.flowText}"></span></button>
+								</div>
+								<div th:class="!${idx.last} ? 'flow-step-arrow glyphicon glyphicon-arrow-right' : ''"></div>
+							</div>
+						</div>
+					</div>
+					<br>
+					<div class="col-md-12">
+						<br>
+						<br>
+						<table>
+							<tr>
+								<td><B>Node Status</B>
+								<i class="tooltip-pic" data-toggle="tooltip" 
+									th:title="#{todolist.hint.node.status}">
+								</i>
+								<td class="node-status-text"></td>
+								<td class = "node-status-waiting"></td>
+								<td class="node-status-text">Waiting</td> 
+								<td class = "node-status-process"></td>
+								<td class="node-status-text">On Process</td>
+								<td class = "node-status-complete"></td>
+								<td class="node-status-text">Complete</td>
+								<td class = "node-status-reject"></td>
+								<td class="node-status-text">Reject</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div class="col-md-12"><br><br><br></div>
+					
+					<div name="flow-box" th:value="${userRequest.urStep}"th:each="userRequest : ${userRequestDetailModel.urStepList}">
+						<div class="font-label-title pull-left">
+							<h4 class="font-label-title" th:text="${userRequest.urStepText}"></h4>
+						</div>
+					
+						<table class="table">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no">No</th>
+									<th class="col-data">Username</th>
+									<th class="col-data">Name</th>
+									<th class="col-data">Email</th>
+									<th class="col-data">Phone</th>
+									<th class="col-data">Mobile</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="no-padding" colspan="6">
+										<div class="scroll-bar">
+											<table class="table">
+												<tr th:each="userCanApprove,iter : ${userRequest.urStepApproveList}">
+													<td  class="col-no" th:text="${iter.index}+1">
+													<td  class="col-data" th:text="${userCanApprove.username}"></td>
+													<td  class="col-data" th:text="${userCanApprove.enname} +' '+ ${userCanApprove.ensurname}"></td>
+													<td  class="col-data" th:text="${userCanApprove.email}"></td>
+													<td  class="col-data" th:text="${userCanApprove.phone}"></td>
+													<td  class="col-data" th:text="${userCanApprove.mobile}"></td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="font-label-title pull-left" th:if="${not #lists.isEmpty(userRequest.urApproveHistoryList)}">
+							<h4 class="font-label-title">Approver By</h4>
+						</div>
+						<table class="table" th:if="${not #lists.isEmpty(userRequest.urApproveHistoryList)}">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no">No</th>
+									<th class="col-data">Username</th>
+									<th class="col-data">Date</th>
+									<th class="col-data">Status</th>
+									<th class="col-data">Remark</th>
+									<th class="col-data">File</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="no-padding" colspan="6">
+										<div class="scroll-bar">
+											<table class="table">
+												<tbody>
+													<tr th:each="userApprove,iter : ${userRequest.urApproveHistoryList}">
+														<td class="col-no" th:text="${iter.index}+1">
+														<td class="col-data" th:text="${userApprove.username}"></td>
+														<td class="col-data" th:text="${#dates.format(userApprove.approveTime,'dd/MM/yyyy HH:mm:ss')}"></td>
+														<td class="col-data" th:text="${userApprove.status}"></td>
+														<td class="col-data" th:text="${userApprove.remark}"></td>
+														<td class="col-data" th:if="${#lists.isEmpty(userApprove.getFileList())}"></td>
+														<td class="col-data" th:if="${not #lists.isEmpty(userApprove.getFileList())}">
+															<a th:text="${userApprove.getFileList().get(0).fileName}"
+															th:href="@{/userrequest/appTemplate('fileName'=${userApprove.getFileList().get(0).fileName},'filePath'=${userApprove.getFileList().get(0).filePath})}"></a>
+														</td>
+													</tr>
+												</tbody>
+											</table> 
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				
+					<div class="font-label-title h1 pull-left">
+						<h4 class="font-label-title">User List</h4>
+					</div>
+					<div class="action-panel pull-right">
+						<h4 th:if="${not #lists.isEmpty(userRequestDetailModel.urDetail.urForUserList)}">
+							<button th:if="${userRequestDetailModel.urDetail.urApprove}==1 and ${userRequestDetailModel.currentStep}!='6'" type="button" name="approveAll" class="btn btn-green">All Approve</button>
+							<button th:if="${userRequestDetailModel.urDetail.urReject}==1 and ${userRequestDetailModel.currentStep}!='6'" type="button" name="rejectAll" class="btn btn-danger">All Reject</button>
+						</h4>
+					</div>
+					
+						<table class="table">
+							<thead>
+								<tr class="table-header-color">
+									<th class="col-no">No</th>
+									<th class="col-data">Username</th>
+									<th class="col-data">Name</th>
+									<th class="col-data" th:if="${userRequestDetailModel.urDetail.urToken}=='1'">Token</th>
+									<th class="col-data">Status</th>
+									<th class="col-data" th:if="${userRequestDetailModel.urDetail.urApprove}==1">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="no-padding" th:colspan="${userRequestDetailModel.urDetail.urApprove!='1'}?(${userRequestDetailModel.urDetail.urToken=='1'}?'5':'4'):(${userRequestDetailModel.urDetail.urToken=='1'}?'6':'5')">   
+										<div class="scroll-bar">
+											<table class="table" name="userListTable">
+												<tbody>
+													<tr th:each="urForUser,iter : ${userRequestDetailModel.urDetail.urForUserList}">
+														<td  class="col-no" th:text="${iter.index}+1"></td>
+														<td class="col-data">
+															<font color="green">
+																<u class="cursor-link" name="username" th:text="${urForUser.username}"></u>
+																<div name="userInfo">
+																	<input type="hidden" name="username" th:value="${urForUser.username}"/>
+																	<input type="hidden" name="enfullname" th:value="${urForUser.enfullname}"/>
+																	<input type="hidden" name="email" th:value="${urForUser.email}"/>
+																	<input type="hidden" name="phone" th:value="${urForUser.phone}"/>
+																	<input type="hidden" name="mobile" th:value="${urForUser.mobile}"/>
+																	<input type="hidden" name="organize" th:value="${urForUser.orgdesc}"/>
+																	<input type="hidden" name="company" th:value="${urForUser.coname}"/>
+																	<input type="hidden" name="position" th:value="${urForUser.position}"/>
+																	<input type="hidden" name="token" th:value="${urForUser.tokenSerialNumber}"/>
+																	<input type="hidden" name="status" th:value="${urForUser.urStatus}"/>
+																	<input type="hidden" name="statusText" th:value="${urForUser.urStatusText}"/>
+																	<input type="hidden" name="ur_step_remark" th:value="${urForUser.urStep}"/>
+																</div>
+															</font>
+														</td>
+														<td class="col-data" th:text="${urForUser.enfullname}"></td>
+														<td class="col-data" th:if="${userRequestDetailModel.urDetail.urToken}=='1'">
+															<input size="12" name="tokenSerialNumber" type="text" maxlength="20" th:value = "${urForUser.tokenSerialNumber}" 
+															th:disabled="${userRequestDetailModel.currentStep != '5' or userRequestDetailModel.urDetail.urApprove != '1' 
+															or (userRequestDetailModel.currentStep == '5' and urForUser.tokenSerialNumber != '' and urForUser.tokenSerialNumber != null )
+															or userRequestDetailModel.urDetail.requestType =='Terminate' }"></input>
+														</td>
+														<td class="col-data" th:if="${urForUser.urStatus}!='3'" th:text="${urForUser.urStatusText}"></td>
+														<td class="col-data" th:if="${urForUser.urStatus}=='3'" th:text="${urForUser.urStep}"></td>
+														<td class="col-data" th:if="${userRequestDetailModel.urDetail.urApprove}==1">
+															<div th:if="${urForUser.urStatus}=='1'">
+																<button th:if="${userRequestDetailModel.urDetail.urApprove}==1" 
+																	type="button" name="approveBtn" th:value="${iter.index}+1" 
+																	class="btn btn-green">Approve</button>
+														  		<button th:if="${userRequestDetailModel.urDetail.urReject}==1" 
+														  			type="button" name="rejectBtn" th:value="${iter.index}+1" 
+														  			class="btn">Reject</button>
+														  		<input th:id="'approveStatusOf'+(${iter.index}+1)" type="hidden" name="approveStatus" value="1">
+																<input th:id="'urStatusOf'+(${iter.index}+1)" type="hidden" name="urStatus" th:value="${urForUser.urStatus}">
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table> 
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					
+					<div class="col-md-12 text-center">
+						<button th:if="${userRequestDetailModel.urDetail.urApprove}==1" type="button" name="submitBtn" class="btn btn-green">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="successURL" th:action="@{/userrequest/ur/detail/}+${userRequestDetailModel.urDetail.urId}"></div>
+			
+		<div id="userInfoDialog" title="Information" class="dialog">
+			<form class="form-horizontal" name="userInfoForm">
+			<div class="col-md-12">
+				<div class="row">
+					<br>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.username}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="username"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.name}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="name"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label" th:utext="#{todolist.label.email}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="email"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label" th:utext="#{todolist.label.phone}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="phone"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label" th:utext="#{todolist.label.mobile}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="mobile"></p>
+					</div>
+				</div>
+				
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.position}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="position"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.organize}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="organize"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.company}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="company"></p>
+					</div>
+				</div>
+				<div class="row" name="tokenSerialLabel">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.token}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="token"></p>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col-md-offset-1 col-md-2 control-label font-label " th:utext="#{todolist.label.status}"></label>
+					<div class="col-md-offset-1 col-md-6">
+						<p class="form-control-static" name="status"></p>
+					</div>
+				</div>	
+				<div class="row">
+					<br>
+				</div>		
+				<div class="row">
+					<br>
+				</div>
+			</div>
+			</form>
+		</div>	
+			
+		<div id="submitDialog" title="Information" class="dialog">
+			<br>
+			<div class="col-md-11">
+				<form class="form-horizontal" id="approveForm" th:action="@{/userrequest/approve/ur}" method="post" name="approveForm" enctype="multipart/form-data">
+					<div class="form-group">
+						<input type="hidden" name="jsonData"> 
+						<label class="col-md-offset-1 col-md-3 control-label" th:utext="#{todolist.label.remark}"></label>
+						<div class="col-md-6">
+							<textarea class="form-control" name="remark" rows="3"></textarea>
+						</div>
+						<div class="col-md-offset-4 col-md-6">
+							<font class="control-label font-label" color="red" name="remarkLengthMsg" th:utext="#{common.error.length.250}"></font>
+						</div>
+							
+					</div>
+					<div class="form-group">
+						<label class="col-md-offset-1 col-md-3 control-label">File</label>
+						<div class="col-md-6">
+							<input type="hidden" name="fileTotal" th:value="0" />
+							<div name="browseBtn" class="buttonupload btn btn-green">
+								<span>Browse</span> <input type="file" class="btn upload"
+									maxlength="1" accept="xls|xlsx|doc|docx|txt|zip|rar|7z"
+									id="fileUpload" name="fileUpload" />
+							</div>
+							<div id="fileTemplateList"></div>
+							<label th:utext="#{todolist.label.file.warn}"></label>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="btn-dialog-panel btn-panel col-md-12 text-center">
+							<button type="button" name="saveBtn" class="btn btn-green">Submit</button>
+							<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+						</div>
+					</div>
+					<div class="form-group">
+						<br>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="dialog-success" title="Success" class="dialog" th:utext="#{todolist.dialog.success}"></div>
+		<div id="dialog-reject-error" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.reject}"></div>
+		<div id="dialog-approve-error" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.approve}"></div>
+		<div id="dialog-token-error" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.token}"></div>
+		<div id="dialog-confirm" title="Confirmation" class="dialog" th:utext="#{todolist.dialog.confirm}"></div>
+		<div id="dialog-role-error" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.role}"></div>
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

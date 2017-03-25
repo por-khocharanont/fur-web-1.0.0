@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Todo Lists</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" th:src="@{/res/js/views/todolists/todolists.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content" class="bg-shadow">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="navigation navi-left">
+					<ul>
+						<img th:src="@{/res/img/icon/todolist_inactive.png}" height="42" width="42">
+						<B th:utext="#{common.label.todo}"></B>
+						<li>
+							<a href="" class="nav-menu-bar link-active" value="1">On Process</a>
+						</li>
+						<li>
+							<a href="" class="nav-menu-bar" value="2" >Complete</a>
+						</li>
+					</ul>
+				</div>
+			
+				<h1 class="font-label-title" th:utext="#{common.label.todo}"></h1>
+				<hr class="hr-line">
+				<div class="row">
+					<form class="form-horizontal"  th:action="@{/todolist/ur}" id="searchForm" name="searchForm">
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+		
+							<div class="form-group">
+								<label class="col-md-offset-1 col-md-3 control-label font-label " th:utext="#{todolist.label.request.no}"></label>
+								<div class="col-md-5">
+									<input class="form-control" name="requestNo" maxlength="100"></input>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-offset-1 col-md-3 control-label font-label " th:utext="#{todolist.label.urno}"></label>
+								<div class="col-md-5">
+									<input class="form-control" name="urId" maxlength="100"></input>
+								</div>
+							</div>
+							<div class="form-group" id="div-date">
+								<label class="col-md-offset-1 col-md-3 control-label font-label " th:utext="#{todolist.label.start}"></label>
+								<div class="col-md-2">
+									<input class="form-control" type="text" id="startDate"  name="startDate" readonly='true' style="background-color: white;"/> 
+						
+								</div>
+								<label class="col-md-1 control-label font-label  middle-text" th:utext="#{todolist.label.end}"></label>
+								<div class="col-md-2">
+									<input class="form-control"  type="text" id="endDate" name="endDate" readonly='true' style="background-color: white;"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-md-offset-1 col-md-3 control-label font-label " th:utext="#{todolist.label.status}"></label>
+								<div class="col-md-5">
+									<select class="form-control" name ="status">
+										<option value="0" th:utext="#{todolist.option.all}"></option>
+										<option value="1" th:utext="#{todolist.option.user}"></option>
+										<option value="2" th:utext="#{todolist.option.manager}"></option>
+										<option value="3" th:utext="#{todolist.option.roleiden}"></option>
+										<option value="4" th:utext="#{todolist.option.appowner}"></option>
+										<option value="5" th:utext="#{todolist.option.custodian}"></option>
+										<option value="6" th:utext="#{todolist.option.close}"></option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="btn-panel col-md-12 text-center">
+									<button type="button" id="searchBtn" class="btn btn-green">Search</button>
+									<button type="reset" id="resetBtn" class="btn btn-grey">Reset</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-1"></div>
+					</form>
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<div name="approveButtonPanel" class="action-panel pull-right">
+					<button type="button" id="approveBtn" class="btn btn-green">Approve</button>
+					<button type="button" id="rejectBtn" class="btn btn-danger">Reject</button>
+				</div>
+			</div>
+			<div id="todoListTableGrid" class="col-md-12">
+				<div name="dataNotFound" style="text-align: center;">
+					<br>
+					<font th:utext="#{common.data.not.found}"></font>
+					<br>
+				</div>
+				<div name="dataFound" id="todolistGrid" class="tableGrid" th:action="@{/userrequest/}">
+					<table id="todoListTable"></table>
+					<div id="todoListTablePager"></div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<!-- Dialog -->
+		<div id="dialog-success" title="Success" class="dialog" th:utext="#{todolist.dialog.success}"></div>
+		<div id="dialog-reject-error" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.reject}"></div>
+		<div id="dialog-approve-error-default" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.approve.default}"></div>
+		<div id="dialog-approve-error" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.approve}"></div>
+		<div id="dialog-no-select-row" title="Warning" class="dialog" th:utext="#{todolist.dialog.error.please.fill}"></div>
+		<div id="dialog-confirm" title="Confirmation" class="dialog" th:utext="#{todolist.dialog.confirm}"></div>
+		
+		<div id="submitDialog" title="Information" class="dialog">
+			<br>
+			<div class="col-md-11">
+				<form class="form-horizontal" id="approveForm" th:action="@{/userrequest/approve}" method="post" name="approveForm" enctype="multipart/form-data">
+					<div class="form-group">
+						<input type="hidden" name="jsonData">
+						<input type="hidden" name="approveType">
+						<label class="col-md-offset-1 col-md-3 control-label" th:utext="#{todolist.label.remark}"></label>
+						<div class="col-md-6">
+							<textarea class="form-control" name="remark" rows="3"></textarea>
+						</div>
+						<div class="col-md-offset-4 col-md-6">
+							<font class="control-label font-label" color="red" name="remarkLengthMsg" th:utext="#{common.error.length.250}"></font>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-offset-1 col-md-3 control-label" th:utext="#{todolist.label.file}"></label>
+						<div class="col-md-6">
+							<input type="hidden" name="fileTotal" th:value="0" />
+							<div name="browseBtn" class="buttonupload btn btn-green">
+								<span>Browse</span> <input type="file" class="btn upload"
+									maxlength="1" accept="xls|xlsx|doc|docx|txt|zip|rar|7z"
+									id="fileUpload" name="fileUpload" />
+							</div>
+							<div id="fileTemplateList"></div>
+							<label th:utext="#{todolist.label.file.warn}"></label>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="btn-dialog-panel btn-panel col-md-12 text-center">
+							<button type="button" name="saveBtn" class="btn btn-green">Save</button>
+							<button type="button" name="cancelBtn" class="btn btn-danger">Cancel</button>
+						</div>
+					</div>
+					<div class="form-group">
+						<br>
+					</div>
+				</form>
+			</div>
+		</div>	
+		
+		<br>
+	</section>
+	<footer class="footer" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center"></p>
+		</div>
+	</footer>
+</body>
+</html>

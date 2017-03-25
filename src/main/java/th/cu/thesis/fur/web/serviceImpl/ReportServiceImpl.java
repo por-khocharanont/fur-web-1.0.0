@@ -1,0 +1,200 @@
+package th.cu.thesis.fur.web.serviceImpl;
+
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import th.cu.thesis.fur.web.model.ApplicationReportParams;
+import th.cu.thesis.fur.web.model.Eligible;
+import th.cu.thesis.fur.web.model.EligibleReportParams;
+import th.cu.thesis.fur.web.model.UrReportParams;
+import th.cu.thesis.fur.web.model.grid.BaseGridResponse;
+import th.cu.thesis.fur.web.service.ReportService;
+import th.cu.thesis.fur.web.service.exception.ServiceException;
+import th.cu.thesis.fur.web.util.RestUtil;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+@Service
+public class ReportServiceImpl implements ReportService {
+	
+	@Value("${fur.api.host}")
+	private String apiHost;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Override
+	public BaseGridResponse searchReport(Map<String, String> param) throws ServiceException {
+		
+		BaseGridResponse baseGridResponse=null;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		Gson gson = new GsonBuilder().create();
+		String endpoint = apiHost +"/report/serach/applist";
+		String jsonRequsetString = gson.toJson(param);
+		HttpEntity<String> http = new HttpEntity<String>(jsonRequsetString,headers);
+		try{
+			ResponseEntity<BaseGridResponse> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, BaseGridResponse.class);
+			baseGridResponse=responseEntity.getBody();
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+		
+		return baseGridResponse;
+	}
+
+	@Override
+	public BaseGridResponse searchUr(Map<String, String> param)throws ServiceException {
+		BaseGridResponse baseGridResponse=null;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		Gson gson = new GsonBuilder().create();
+		String endpoint = apiHost +"/report/serach/urlist";
+		String jsonRequsetString = gson.toJson(param);
+		HttpEntity<String> http = new HttpEntity<String>(jsonRequsetString,headers);
+		try{
+			ResponseEntity<BaseGridResponse> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, BaseGridResponse.class);
+			baseGridResponse=responseEntity.getBody();
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+		
+		return baseGridResponse;
+	}
+	@Override
+	public BaseGridResponse searchEligible(Map<String, String> param)throws ServiceException {
+		BaseGridResponse baseGridResponse=null;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		Gson gson = new GsonBuilder().create();
+		String endpoint = apiHost +"/report/serach/eligiblelist";
+		String jsonRequsetString = gson.toJson(param);
+		HttpEntity<String> http = new HttpEntity<String>(jsonRequsetString,headers);
+		try{
+			ResponseEntity<BaseGridResponse> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, BaseGridResponse.class);
+			baseGridResponse=responseEntity.getBody();
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+		
+		return baseGridResponse;
+	}
+	@Override
+	public void exportExcelApplicationDefault(HttpServletResponse response,ApplicationReportParams paramsApp) throws ServiceException {
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		String endpoint = apiHost +"/report/export/applicationDefault";
+		HttpEntity<ApplicationReportParams> http = new HttpEntity<ApplicationReportParams>(paramsApp,headers);
+		try{
+			ResponseEntity<byte[]> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, byte[].class);
+			byte[] bytes = responseEntity.getBody();
+			response.addHeader("Content-Disposition", "attachment; filename=\"ReportApplicationDefault.xls\"");
+			// Set content type
+			response.setContentType("application/vnd.ms-excel");
+			response.setContentLength(bytes.length);
+			// Retrieve output stream
+			OutputStream outputStream = response.getOutputStream();
+			// Write to output stream
+			outputStream.write(bytes);
+			// Flush the stream
+			outputStream.flush();
+			outputStream.close();
+			response.flushBuffer();
+			IOUtils.closeQuietly(response.getOutputStream());
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+	}
+
+	@Override
+	public void exportExcelUrDefault(HttpServletResponse response,UrReportParams paramsUr) throws ServiceException {
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		String endpoint = apiHost +"/report/export/UrDefault";
+		HttpEntity<UrReportParams> http = new HttpEntity<UrReportParams>(paramsUr,headers);
+		try{
+			ResponseEntity<byte[]> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, byte[].class);
+			byte[] bytes = responseEntity.getBody();
+			response.addHeader("Content-Disposition", "attachment; filename=\"ReportUrDefault.xls\"");
+			// Set content type
+			response.setContentType("application/vnd.ms-excel");
+			response.setContentLength(bytes.length);
+			// Retrieve output stream
+			OutputStream outputStream = response.getOutputStream();
+			// Write to output stream
+			outputStream.write(bytes);
+			// Flush the stream
+			outputStream.flush();
+			outputStream.close();
+			response.flushBuffer();
+			IOUtils.closeQuietly(response.getOutputStream());
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+	}
+	@Override
+	public void exportExcelEligibleDefault(HttpServletResponse response,EligibleReportParams paramsUr) throws ServiceException {
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		String endpoint = apiHost +"/report/export/eligibleDefault";
+		HttpEntity<EligibleReportParams> http = new HttpEntity<EligibleReportParams>(paramsUr,headers);
+		try{
+			ResponseEntity<byte[]> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, byte[].class);
+			byte[] bytes = responseEntity.getBody();
+			response.addHeader("Content-Disposition", "attachment; filename=\"ReportEligibleDefault.xls\"");
+			// Set content type
+			response.setContentType("application/vnd.ms-excel");
+			response.setContentLength(bytes.length);
+			// Retrieve output stream
+			OutputStream outputStream = response.getOutputStream();
+			// Write to output stream
+			outputStream.write(bytes);
+			// Flush the stream
+			outputStream.flush();
+			outputStream.close();
+			response.flushBuffer();
+			IOUtils.closeQuietly(response.getOutputStream());
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+	}
+
+	@Override
+	public List<Map<String, String>> getflowAll() throws ServiceException {
+		List<Map<String, String>> flows =null;
+		HttpHeaders headers = RestUtil.createAPIHeader();
+		String endpoint = apiHost +"/report/combobox/flowsall";
+		HttpEntity<String> http = new HttpEntity<String>(headers);
+		try{
+			ResponseEntity<? extends List<Map<String, String>>> responseEntity = restTemplate.exchange(new URI(endpoint), HttpMethod.POST, http, (Class<? extends List<Map<String, String>>>)List.class);
+			flows=responseEntity.getBody();
+		}catch(Exception e){
+			e.printStackTrace();
+			throw ServiceException.get500SystemError(e);
+		}
+		return flows;
+	}
+
+
+
+
+}

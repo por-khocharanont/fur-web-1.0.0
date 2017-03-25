@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>UserRequest</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+/*]]>*/
+</script>
+<script type="text/javascript" th:src="@{/res/js/views/userrequest/userrequest.submit.js}">
+</script>
+</head>
+<body>
+	<section layout:fragment="content">
+		<form th:action="@{/userrequest/individual/upload}" enctype="multipart/form-data" method="POST">
+			<input type="file" name="fileUploads" /><br/>
+			<input type="file" name="fileUploads" /><br/>
+			<input type="text" name="username" />
+			<button type="submit">Submit</button>
+		</form>
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

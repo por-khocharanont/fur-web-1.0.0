@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{template/layout}">
+<head>
+<title>Application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript"
+	th:src="@{/res/js/views/admin/flowconfig/search.js}"></script>
+</head>
+<body>
+	<section layout:fragment="content">
+		<div class="row">
+			<form class="form-horizontal" id="searchForm" name="searchForm" th:action="@{/flowconfig/search}" >
+			   <div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Flow Name</label>
+									<div class="col-md-5">
+										<input value="" class="form-control" id="flowname" name="flowname"></input>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">Flow Type</label>
+									<div class="col-md-5">
+										<select id="flowtype" name="flowtype" class="input-select">
+											<option value="" selected="selected" class="text-center">--------------------------------------------- กรุณาเลือก ---------------------------------------------</option>
+											<option value="1" class="text-center">New Standard</option>
+											<option value="2" class="text-center">New Special</option>
+											<option value="3" class="text-center">Terminate Standard</option>
+											<option value="4" class="text-center">Terminate Special</option>
+											<option value="5" class="text-center">Change Standard</option>
+											<option value="6" class="text-center">Change Special</option>
+										</select>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+									<label class="col-md-2 control-label">User Type</label>
+									<div class="col-md-5">
+										<select id="usertype" name="usertype" class="input-select">
+											<option value="" selected="selected" class="text-center">--------------------------------------------- กรุณาเลือก ---------------------------------------------</option>
+											<option value="1" class="text-center">ACC</option>
+											<option value="2" class="text-center">Branch</option>
+											<option value="3" class="text-center">Outlet</option>
+											<option value="4" class="text-center">Back-Office</option>
+										</select>
+									</div>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group">
+									<div class="btn-panel col-md-12 text-center">
+										<button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+										<button type="reset" class="btn btn-danger">Reset</button>
+									</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-8">
+					</div>
+					<div class="col-md-2">
+						<div class="pull-right">
+							<button type="button" class="btn btn-success" id="addflow">Add Flow</button>
+						</div>
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+				<BR>
+				<div class="row">
+					<div class="col-md-2">
+					</div>
+					<div class="col-md-8">
+						<table id="jqGrid"></table>
+		    			<div id="jqGridPager"></div>
+		    			<a id="editUrl" style="display:none;">editUrl</a>		
+					</div>
+					<div class="col-md-2">
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+	<footer class="footer hide" layout:fragment="footer">
+		<div class="container">
+			<p class="text-center">footer</p>
+		</div>
+	</footer>
+</body>
+</html>

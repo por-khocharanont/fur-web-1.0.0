@@ -1,0 +1,28 @@
+package th.co.ais.mimo.acim.web.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import th.co.ais.mimo.acim.web.model.ApplicationReportParams;
+import th.co.ais.mimo.acim.web.model.EligibleReportParams;
+import th.co.ais.mimo.acim.web.model.UrReportParams;
+import th.co.ais.mimo.acim.web.model.grid.BaseGridResponse;
+import th.co.ais.mimo.acim.web.service.exception.ServiceException;
+
+public interface ReportService {
+	public BaseGridResponse searchReport(Map<String,String> param) throws ServiceException;
+
+	public BaseGridResponse searchUr(Map<String, String> param) throws ServiceException;
+	
+	public void exportExcelApplicationDefault (HttpServletResponse response, ApplicationReportParams paramsApp) throws ServiceException;
+
+	public void exportExcelUrDefault(HttpServletResponse response,UrReportParams paramsUr) throws ServiceException;
+
+	public BaseGridResponse searchEligible(Map<String, String> param)throws ServiceException;
+
+	public void exportExcelEligibleDefault(HttpServletResponse response,EligibleReportParams paramsUr)throws ServiceException;
+
+	public List<Map<String, String>> getflowAll()throws ServiceException;
+}

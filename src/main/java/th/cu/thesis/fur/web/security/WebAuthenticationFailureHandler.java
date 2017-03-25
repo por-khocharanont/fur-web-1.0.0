@@ -1,0 +1,95 @@
+package th.cu.thesis.fur.web.security;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
+import org.springframework.security.web.util.UrlUtils;
+import org.springframework.util.Assert;
+
+
+public class WebAuthenticationFailureHandler implements AuthenticationFailureHandler {
+	private final Logger logger = LoggerFactory.getLogger(WebAuthenticationFailureHandler.class);
+	
+	private String defaultFailureUrl;
+    private boolean forwardToDestination = false;
+    private boolean allowSessionCreation = true;
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    
+    public WebAuthenticationFailureHandler() {
+    }
+
+    public WebAuthenticationFailureHandler(String defaultFailureUrl) {
+        setDefaultFailureUrl(defaultFailureUrl);
+    }
+    
+    public void setDefaultFailureUrl(String defaultFailureUrl) {
+        Assert.isTrue(UrlUtils.isValidRedirectUrl(defaultFailureUrl),"'" + defaultFailureUrl + "' is not a valid redirect URL");
+        this.defaultFailureUrl = defaultFailureUrl;
+    }
+
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest request,
+			HttpServletResponse response, AuthenticationException exception)
+			throws IOException, ServletException {
+		if (defaultFailureUrl == null) {
+            logger.debug("No failure URL set, sending 401 Unauthorized error");
+
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed: " + exception.getMessage());
+        } else {
+        	logger.debug("request :: {}", request);
+        	logger.debug("exception :: {}", exception);
+
+            saveException(request, exception);
+
+            if (forwardToDestination) {
+                logger.debug("Forwarding to " + defaultFailureUrl);
+
+                request.getRequestDispatcher(defaultFailureUrl).forward(request, response);
+            } else {    
+            	logger.debug("exception :: {}", exception.getMessage());
+            	if(exception instanceof SessionAuthenticationException) {
+            		
+//            		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//            		List<SessionInformation> sessionInfoList = sessionRegistry.getAllSessions(principal, true);
+//            		SessionInformation ss = sessionInfoList.get(0);
+//            		ss.expireNow();
+            		
+            		defaultFailureUrl = "/loginErrorSession";
+            	} else{
+                	defaultFailureUrl = "/login?error";
+                	
+                	request.getSession().setAttribute("errorMsg", exception.getMessage());
+                } 
+            	
+                redirectStrategy.sendRedirect(request, response, defaultFailureUrl);
+            }
+        }
+
+	}
+	
+	protected final void saveException(HttpServletRequest request, AuthenticationException exception) {
+        if (forwardToDestination) {
+            request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);
+        } else {
+            HttpSession session = request.getSession(false);
+
+            if (session != null || allowSessionCreation) {
+                request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, exception);
+            }
+        }
+    }
+
+}

@@ -1,0 +1,1005 @@
+$.jgrid.defaults.width = 780;
+$.jgrid.defaults.responsive = true;
+$.jgrid.defaults.styleUI = 'Bootstrap';
+	
+
+var custodianType = '1';
+var defaultRole = { appRoleName : 'Default' , appRoleDesc : 'Default Role Application'};
+
+var roleApplicationTemp = [];
+roleApplicationTemp.push(defaultRole);
+
+var roleEligibleList = [];
+var orgEligibleList = [];
+var eligibleList = []
+
+var appOwnerPersonList = [];
+var appOwnerPersonTeamList= [];
+var appOwnerTeamList = [];
+
+var custodianPersonList = [];
+var custodianPersonTeamList = [];
+var custodianTeamList = [];
+
+var custodianPersonACCList = [];
+var custodianPersonTeamACCList = [];
+var custodianTeamACCList = [];
+
+var custodianPersonBackOfficeList = [];
+var custodianPersonTeamBackOfficeList = [];
+var custodianTeamBackOfficeList = [];
+
+var custodianPersonBranchList = [];
+var custodianPersonTeamBranchList = [];
+var custodianTeamBranchList = [];
+
+var custodianPersonOutletList = [];
+var custodianPersonTeamOutletList = [];
+var custodianTeamOutletList = [];
+
+function isDuplicate(value,arr,key){
+	var isDup = false;
+	$.each(arr, function(i,obj) {
+		if(key!=null){
+//			if(obj[key] == value){
+			if(obj[key].toUpperCase() === value.toUpperCase()){
+				isDup = true;
+			}
+		}else{
+//			if(obj == value){
+			if(obj.toUpperCase() === value.toUpperCase()){
+				isDup = true;
+			}
+		}
+	}); 
+	return isDup;
+}
+
+
+function isDuplicateOtherTeam(value,arr,idx,object,key){
+	var isDup = false;
+	$.each(arr, function(i,obj) {
+		if(i!=idx || idx==''){
+			$.each(obj[object],function(j,person){
+				//if(person[key] == value){
+				if(person[key].toUpperCase() === value.toUpperCase()){
+					isDup = true;
+				}
+			});
+		}
+	}); 
+	return isDup;
+}
+
+$(document).on("keypress", ":input:not(textarea)", function(event) {
+    return event.keyCode != 13;
+});
+
+$(document).ready(function () {
+	/*<![CDATA[*/
+
+	reloadRoleTable();
+	
+	var roleApplicationDialog = $('#roleApplicationDialog');
+	var eligibleDialog = $('#eligibleDialog');
+	var appOwnerPersonDialog = $('#appOwnerPersonDialog');
+	var appOwnerTeamDialog = $('#appOwnerTeamDialog');
+	var custodianPersonDialog = $('#custodianPersonDialog');
+	var custodianTeamDialog = $('#custodianTeamDialog');
+
+	$('#fileUpload').MultiFile({
+		accept : 'xls|xlsx|doc|docx|txt|zip|rar|7z',
+		max	: 3,
+		maxfile : 1000,
+		list : '#fileTemplateList',
+		STRING: {	
+			remove: '<img class="delete" src="/fur-web/res/img/icon/delete.png">',
+			denied: 'รองรับประเภทไฟล์แบบ .xls ,.xlsx ,.doc ,.docx ,.txt ,.zip ,.rar ,.7z',
+			duplicate: 'ตรวจสอบพบชื่อไฟล์ซ้ำ กรุณาตรวจสอบชื่อไฟล์',
+			toobig: 'ไฟล์มีขนาดเกิน 1 mb',
+			toomany: 'ไฟล์เกินจำนวนที่กำหนด 3 ไฟล์'
+		},
+		afterFileSelect: function(element, value, master_element) {
+			var new_total_file = ($('div[name=browseBtn]').find('.upload').length) - 1;
+			checkLengthFileTemplate(0,new_total_file);
+		},
+		afterFileRemove: function(element, value, master_element) {
+			var new_total_file = ($('div[name=browseBtn]').find('.upload').length) - 1;
+			checkLengthFileTemplate(0,new_total_file);
+		},
+	});
+	
+	function checkLengthFileTemplate(currentCount,newCount){
+		currentCount = parseInt(currentCount);
+		newCount = parseInt(newCount);
+		if(3 > (currentCount + newCount)){
+			$("div[name=browseBtn]").show();
+		}
+		else{
+			$("div[name=browseBtn]").hide();
+		}
+	}
+	
+	 $("#dialog-success").dialog({
+         autoOpen: false, 
+         modal: true,
+         draggable : false,
+         resizable : false,
+         buttons: {
+	 		Close:function() {
+	 			var actionRedirect = $('#successURL').attr('action');
+            	window.location.href = actionRedirect;
+	 			$(this).dialog("close");
+	 		}
+         }
+	 });
+	 
+	 $("#dialog-error-create").dialog({
+         autoOpen: false, 
+         modal: true,
+         draggable : false,
+         resizable : false,
+         buttons: {
+	 		Close:function() {
+	 			$(this).dialog("close");
+	 		}
+         }
+	 });
+	 
+	$("#dialog-error-please-fill").dialog({
+	    autoOpen: false,
+	    modal: true,
+        draggable : false,
+        resizable : false,
+	    buttons : {
+	    	Close : function(){
+	    		$(this).dialog("close");
+	    	}
+	    }
+	});
+	 	    	
+	
+	 $("#dialog-confirm").dialog({
+         autoOpen: false, 
+         modal: true,
+         draggable : false,
+         resizable : false,
+         modal: true,
+         buttons : [{
+		    	text : "Confirm",
+		    	click : function(e) {
+		 			$(e.target).attr("disabled", true);
+		 			var appName = $('#applicationForm').find('input[name=appName]').val();
+		 	    	var appInfo = $('#applicationForm').find('textarea[name=appInfo]').val();
+		 	    	
+		 	    	var authentication = [];
+		 	    	
+		 	        $('#applicationForm').find('input[name=authenBy]:checked').each(function(i){
+		 	        	authentication[i] = $(this).val();
+		 	        });
+		 	        
+		 	        var status =  $('#applicationForm').find('input[name=status]:checked').val();
+		 	        var applicationType =  $('#applicationForm').find('input[name=applicationType]:checked').val();
+		 	        
+		 	    	/** role application */
+		 	    	var roleApplication = roleApplicationTemp.slice();
+		 	    	
+		 	    	/** eligible part */
+		 	    	var eligible = [];
+		 	    	$.each(eligibleList,function(i,obj){
+		 	    		var orgname = obj.orgname;
+		 	    		var orgcode = obj.orgcode;
+		 	    		$.each(obj.roles,function(j,role){
+		 	    			var eligible_obj = {
+		 	    				orgname : orgname,
+		 	    				orgcode : orgcode,
+		 	    				appRoleName : role
+		 	    			};
+		 	    			
+		 	    			eligible.push(eligible_obj);
+		 	    		});
+		 	    	});
+		 	    	
+		 	    	/** appOwner Part */
+		 	    	var appOwnerMinimum = $('#appOwnerPanel').find('input[name=minimum]').val();
+		 	    	var appOwnerType = $('#appOwnerPanel').find('input[name=appOwnerType]:checked').val();
+		 	    	var appOwnerList = { 	personList :  appOwnerPersonList.slice(),
+		 					teamList : appOwnerTeamList.slice() }
+		 	    	
+		 	    	var appOwnerApproveType;
+		 	    	if(appOwnerType=='person'){
+		 	    		appOwnerApproveType = $('#appOwnerPanel').find('input[name=appPersonApproveType]:checked').val();
+		 	    	}
+		 	    	else if(appOwnerType=='team'){
+		 	    		appOwnerApproveType = $('#appOwnerPanel').find('input[name=appTeamApproveType]:checked').val();
+		 	    	}
+		 	    	
+		 	    	
+		 	    	/** Custodian Part */
+		 	    	var custodianType = $('#custodianPanel').find('input[name=custodianType]:checked').val();
+		 	    	var custodianMinimum = $('#custodianPanel').find('input[name=minimum]').val();
+		 	    	
+		 	    	var custodianList = { 	personList :  custodianPersonList.slice(),
+		 					teamList : custodianTeamList.slice() }
+		 	    	
+		 	    	console.log(custodianList); 
+		 	    	
+		 	    	var custodianACCList = { 	personList :  custodianPersonACCList.slice(),
+		 					teamList : custodianTeamACCList.slice() }
+
+		 	    	var custodianBackOfficeList = { 	personList :  custodianPersonBackOfficeList.slice(),
+		 					teamList : custodianTeamBackOfficeList.slice() }
+		 	    	
+		 	    	var custodianBranchList = { 	personList :  custodianPersonBranchList.slice(),
+		 					teamList : custodianTeamBranchList.slice() }
+		 	    	
+		 	    	var custodianOutletList = { 	personList :  custodianPersonOutletList.slice(),
+		 					teamList : custodianTeamOutletList.slice() }
+
+		 	    	var custodianApproveType;
+		 	    	if(custodianType=='person'){
+		 	    		custodianApproveType = $('#custodianPanel').find('input[name=cusPersonApproveType]:checked').val();
+		 	    	}
+		 	    	else if(custodianType=='team'){
+		 	    		custodianApproveType = $('#custodianPanel').find('input[name=cusTeamApproveType]:checked').val();
+		 	    	}
+		 	   
+		 	    	
+		 	    	var dataParams = {	
+		 	    						appName : appName,
+		 	    						appInfo : appInfo,
+		 	    						applicationType : applicationType,
+		 	    						authentication : authentication,
+		 	    						status : status,
+		 	    						roleApplication : roleApplication,
+		 	    						eligible : eligible,
+		 	    						appOwnerType : appOwnerType,
+		 	    						appOwnerApproveType : appOwnerApproveType,
+		 	    						appOwnerMinimum : appOwnerMinimum,
+		 	    						appOwnerList : appOwnerList,
+		 	    						custodianType : custodianType,
+		 						    	custodianApproveType : custodianApproveType,
+		 						    	custodianMinimum : custodianMinimum,
+		 						    	custodianList : custodianList,
+		 						    	custodianACCList : custodianACCList,
+		 						    	custodianBackOfficeList : custodianBackOfficeList,
+		 						    	custodianBranchList : custodianBranchList,
+		 						    	custodianOutletList : custodianOutletList}
+		 	    	
+		 	       	var jsonData = JSON.stringify(dataParams);
+		 	    	
+		 	    	$('#applicationForm').find('input[name=jsonData]').val(jsonData);
+		 	    	
+		 	    	$("#dialog-confirm").dialog("close");
+	        		$('#process-loader').show();
+		 	    	$("#applicationForm").ajaxSubmit({
+		 	    		success : function(data) {
+		 	    			$('#process-loader').hide();
+		 	    			$(e.target).attr("disabled", false);
+							$("#dialog-success").dialog("open");
+						},
+						error : function() {
+							$('#process-loader').hide();
+							 $(e.target).attr("disabled", false);
+							$("#dialog-error-create").dialog("open");
+						}
+		 	    	});
+		    	}
+			},{
+				text : "Cancel",
+				class : "red-btn",
+				click : function(){
+					$(this).dialog("close");
+				}
+			}]	
+      });
+	
+	  /** autocomplete orgname */
+    $(eligibleDialog).find('.auto-orgname').autocomplete({
+        select : function(event, ui) {
+        	 $(eligibleDialog).find("input[name=orgNameShow]").val(ui.item.label);
+        	 $(eligibleDialog).find("input[name=orgname]").val(ui.item.orgdesc);
+        	 $(eligibleDialog).find("input[name=orgcode]").val(ui.item.orgcode);
+        	 $(eligibleDialog).find("span[name=selectOrgName]").text(ui.item.orgdesc);
+        	 $(eligibleDialog).find('div[name=showSelectOrg]').show();
+        	 resetOrgEligibleErrorText();
+        },
+        change: function(event, ui) {
+        }
+	});
+    
+    //init text error
+    resetAllErrorText();
+    
+    function resetAllErrorText(){
+    	resetApplicationErrorText();
+    	 $('font[name=appOwnerNullMsg]').hide();
+    	 $('font[name=custodianNullMsg]').hide();
+    }
+    
+    function resetApplicationErrorText(){
+    	$('font[name=appNameErrorMsg]').hide();
+		$('font[name=appNameSuccessMsg]').hide();
+		$('font[name=appNameLengthMsg]').hide();
+		$('font[name=appNameNullMsg]').hide();
+		$('font[name=appInfoLengthMsg]').hide();
+		$('font[name=appAuthenNullMsg]').hide();
+    }
+    //
+    
+	 $('#applicationForm').find('input[name=appName]').on('blur',function(){
+		 var appName =  $('#applicationForm').find('input[name=appName]').val().trim();
+		 $('#applicationForm').find('input[name=appName]').val(appName);
+		 var appNameUrl = $('#applicationForm').find('input[name=appName]').attr('action');
+		 isValidApplicationName(appName,appNameUrl,function(){});
+	});
+    
+    function isValidApplicationName(appName,appNameUrl, func){
+    	resetApplicationErrorText();
+    	if(appName==''){
+    		$('font[name=appNameNullMsg]').show();
+    		func(false);
+    		return;
+    	}
+    	
+    	if(appName.length>100){
+    		$('font[name=appNameLengthMsg]').show();
+    		func(false);
+    		return;
+    	}
+    	
+    	var dataParams = $.param({ appName : appName });
+        $.ajax({
+            url : appNameUrl,
+            type : 'GET',
+            data : dataParams,
+            success : function(data) {
+            	if(data.length>0 && appName!=''){
+            		$('font[name=appNameErrorMsg]').show();
+            		func(false);
+            	}
+            	else{
+            		$('font[name=appNameSuccessMsg]').show();
+            		func(true);
+            	}
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+            	return false;
+            }
+        });
+    }
+    
+    $('div[name=insertApplicationPanel]').find('button[name=resetBtn]').click(function(){
+    	location.reload();
+    });
+    
+    $('div[name=insertApplicationPanel]').find('button[name=addBtn]').click(function(){
+    	resetAllErrorText();
+    	var appName =  $('#applicationForm').find('input[name=appName]').val();
+		var appNameUrl = $('#applicationForm').find('input[name=appName]').attr('action');
+		var appInfo =  $('#applicationForm').find('textarea[name=appInfo]').val();
+		
+    	isValidForm = isValidApplicationName(appName,appNameUrl, function(isValid) {
+    		var isValidForm = isValid
+    		
+    		if(appInfo.length>250){
+	       		 $('font[name=appInfoLengthMsg]').show();
+	       		 isValidForm = false;
+	       	}
+	       	var authentication = [];
+	       	$('#applicationForm').find('input[name=authenBy]:checked').each(function(i){
+	   	        authentication.push($(this).val());
+	   	    });
+	       	
+	       	if(authentication.length==0){
+	       		 $('font[name=appAuthenNullMsg]').show();
+	       		 isValidForm = false;
+	       	}
+	       	
+	       	if(appOwnerPersonList.length == 0  && appOwnerTeamList.length == 0){
+	       		$('font[name=appOwnerNullMsg]').show();
+	       		isValidForm = false;
+	       	}
+	       	
+	       	if(custodianPersonList.length == 0  && custodianTeamList.length == 0){
+	       		$('font[name=custodianNullMsg]').show();
+	       		isValidForm = false;
+	       	}
+	       	
+	       	if(!isValidForm){
+	    		$("#dialog-error-please-fill").dialog("open");
+	    	}
+	    	else{
+	    		$("#dialog-confirm").dialog("open");
+	    	}
+    	});
+    });
+    
+    
+	$(roleApplicationDialog).dialog({
+	    autoOpen: false,
+	    modal: true,
+        draggable : false,
+        resizable : false,
+	    width: 800
+	});
+	
+	$('#rolePanel').find('button[name=show]').click(function() {
+		$(roleApplicationDialog).find('input[name=roleName]').removeAttr("disabled", "disabled");
+		resetRoleApplicationForm();
+		resetRoleApplicationErrorText();
+	    $(roleApplicationDialog).dialog('open', 'position', 'center');
+	    return false;
+	});
+	
+	function resetRoleApplicationErrorText(){
+		$(roleApplicationDialog).find('font[name=appRoleNullMsg]').hide();
+		$(roleApplicationDialog).find('font[name=appRoleLengthMsg]').hide();
+		$(roleApplicationDialog).find('font[name=appRoleDescLengthMsg]').hide();
+		$(roleApplicationDialog).find('font[name=appRoleErrorMsg]').hide();
+	};
+	
+	$(roleApplicationDialog).find('.btn-dialog-panel button[name=cancelBtn]').click(function() {
+		resetRoleApplicationErrorText();
+		$(roleApplicationDialog).dialog('close');
+		resetRoleApplicationForm();
+	});
+	
+	function resetRoleApplicationForm(){
+		$(roleApplicationDialog).find('input[name=roleName]').val('');
+		$(roleApplicationDialog).find('textarea[name=roleDesc]').val('');
+		$(roleApplicationDialog).find('input[name=idx]').val(null);
+	}
+	
+	$(roleApplicationDialog).find('.btn-dialog-panel button[name=saveBtn]').click(function() {
+		resetRoleApplicationErrorText();
+		var roleName = $(roleApplicationDialog).find('input[name=roleName]').val().trim();
+		$(roleApplicationDialog).find('input[name=roleName]').val(roleName);
+		
+		var roleDesc = $(roleApplicationDialog).find('textarea[name=roleDesc]').val();
+		var role = {
+			appRoleName : roleName,
+			appRoleDesc : roleDesc
+		}
+		
+		var canAdd = true;
+		if(role.appRoleName==''){
+			$(roleApplicationDialog).find('font[name=appRoleNullMsg]').show();
+			canAdd = false;
+		}
+		
+		if(role.appRoleName.length>100){
+			$(roleApplicationDialog).find('font[name=appRoleLengthMsg]').show();
+			canAdd = false;
+		}
+		
+		if(role.appRoleDesc.length>250){
+			$(roleApplicationDialog).find('font[name=appRoleDescLengthMsg]').show();
+			canAdd = false;
+		}
+		
+		if(!canAdd){
+			return;
+		}
+		
+		var index = $(roleApplicationDialog).find('input[name=idx]').val();
+		if(index){
+			roleApplicationTemp[index] = role;
+		} 
+		else {
+			if(isDuplicate(role.appRoleName,roleApplicationTemp,'appRoleName')){
+				$(roleApplicationDialog).find('font[name=appRoleErrorMsg]').show();
+				return;
+			}
+			roleApplicationTemp.push(role);
+		}
+		$(roleApplicationDialog).dialog('close');
+		resetRoleApplicationForm();
+		reloadRoleTable();
+	});
+	
+	$("#dialog-error-delete-role").dialog({
+        autoOpen: false, 
+        modal: true,
+        draggable : false,
+        resizable : false,
+        buttons: {
+        	Close:function(){
+        		$(this).dialog("close");
+        	}
+        }
+	});
+	
+		 	
+	$('#rolePanel').find('table[name=roleTable]').on( 'click', '.deleteBtn', function () {
+		var index = $(this).closest('td').parent()[0].sectionRowIndex;
+		
+		var roleName = roleApplicationTemp[index-1].appRoleName;
+		
+		var canDelete = true;
+		$.each(eligibleList, function(i, eligible) {
+			if(isDuplicate(roleName,eligible.roles,null)){
+				canDelete = false;
+			}
+		});
+		
+		if(canDelete){
+			$("#dialog-confirm").dialog("open");
+			
+			 $("#dialog-confirm").dialog({
+			        autoOpen: false, 
+			        modal: true,
+			        draggable : false,
+			        resizable : false,
+			        buttons : [{
+			        	text : "Confirm",
+			        	click : function(){
+			        		roleApplicationTemp.splice(index-1,1);
+							reloadRoleTable();
+							$(this).dialog("close");
+			        	}
+			        },{
+			        	text : "Cancel",
+			        	class : "red-btn",
+			        	click : function(){
+			        		$(this).dialog("close");
+			        	}
+			        }]	
+			    });
+		}
+		else{
+			$("#dialog-error-delete-role").dialog("open");
+		}
+	});
+	
+	$('#rolePanel').find('table[name=roleTable]').on( 'click', '.editBtn', function () {
+		resetRoleApplicationForm();
+		resetRoleApplicationErrorText();
+		var index = $(this).closest('td').parent()[0].sectionRowIndex - 1;
+		var role = roleApplicationTemp[index];
+		$(roleApplicationDialog).find('input[name=roleName]').attr('disabled','true');
+		$(roleApplicationDialog).find('input[name=roleName]').val(role.appRoleName);
+		$(roleApplicationDialog).find('textarea[name=roleDesc]').val(role.appRoleDesc);
+		$(roleApplicationDialog).find('input[name=idx]').val(index);
+		$(roleApplicationDialog).dialog('open');
+		return false;
+		
+	});
+	
+	function reloadRoleTable(){
+		var roleTable = $('#rolePanel').find('table[name=roleTable]');
+		var roleTableBody = $(roleTable).find('tbody');
+		$(roleTableBody).find('tr[class!=tr0]').remove();
+		
+		$.each(roleApplicationTemp, function(i, role) {
+			var row = $(roleTable).find('tbody tr[class=tr0]').clone();
+			$(row).removeClass('tr0');
+			$(row).find('td[data-idx]').text(++i);
+			$(row).find('td[data-rolename]').text(role.appRoleName);
+			$(row).find('td[data-roledesc]').text(role.appRoleDesc);
+			
+			if(role.appRoleName=='Default'){
+				$(row).find('button').hide();
+			}
+			
+			$(row).show();
+			$(roleTableBody).append($(row));
+		});
+	}
+	
+	/** eligible part */
+	
+	$(eligibleDialog).dialog({
+	    autoOpen: false,
+	    modal: true,
+        draggable : false,
+        resizable : false,
+	    width: 1200
+	});
+	
+	function resetRoleEligible(){
+		$(eligibleDialog).find('input[name=idx]').val(null);
+		$(eligibleDialog).find("input[name=orgname]").val('');
+		$(eligibleDialog).find("input[name=orgNameShow]").val('');
+		$(eligibleDialog).find("span[name=selectOrgName]").text('');
+		$(eligibleDialog).find('div[name=showSelectOrg]').hide();
+	}
+	
+	$('#eligiblePanel').find('button[name=show]').click(function() {
+		resetEligibleErrorText();
+		resetRoleEligible();
+		roleEligibleList = [];
+		orgEligibleList = [];
+		roleEligibleList.push(defaultRole.appRoleName);
+		reloadRoleEligibleTable();
+		reloadOrgEligibleTable();
+		$(eligibleDialog).find('input[name=orgNameShow]').removeAttr("disabled", "disabled");
+		$(eligibleDialog).find('div[name=showSelectOrg]').hide();
+		$(eligibleDialog).find('div[name=eligibleAddOrgPanel]').show();
+		$(eligibleDialog).find('div[name=eligibleOrgPanel]').attr("class","col-md-6");
+		$(eligibleDialog).find('div[name=eligibleRolePanel]').attr("class","col-md-6");
+		var options = $(eligibleDialog).find('select[name=roleName]');
+		
+		options.find('option[class!=option0]').remove();
+		
+		if(roleApplicationTemp.length==1){
+			var option = options.find('option[class=option0]').clone();
+			$(option).removeClass('option0');
+			$(option).text("No items available");
+			$(option).val("0");
+			$(option).show();
+			$(options).append(option);
+		}
+
+		$.each(roleApplicationTemp, function(i, role) {
+			if(role.appRoleName!='Default'){
+				var option = options.find('option[class=option0]').clone();
+				$(option).removeClass('option0');
+				$(option).text(role.appRoleName);
+				$(option).val(role.appRoleName);
+				$(option).show();
+				$(options).append(option);
+			}
+		});
+		
+		//set default option
+		$(options).prop("selectedIndex", 1); 
+		
+	    $(eligibleDialog).dialog('open', 'position', 'center');
+	    return false;
+	});
+	
+	function resetRoleEligibleErrorText(){
+		$(eligibleDialog).find('font[name=appRoleErrorMsg]').hide();
+		$(eligibleDialog).find('font[name=appRoleNoItemMsg]').hide();
+	};
+	
+	function resetOrgEligibleErrorText(){
+		$(eligibleDialog).find('font[name=orgNameErrorMsg]').hide();
+		$(eligibleDialog).find('font[name=orgNameNullMsg]').hide();
+		$(eligibleDialog).find('font[name=orgNamePickMsg]').hide();
+	};
+	
+	function resetEligibleErrorText(){
+		resetOrgEligibleErrorText();
+		resetRoleEligibleErrorText();
+	};
+	
+	$(eligibleDialog).find('.btn-form-panel button[name=addRoleBtn]').click(function(){
+		resetRoleEligibleErrorText();
+		var roleName = $(eligibleDialog).find('select[name=roleName]').val();
+		
+		var canAdd = true;
+		
+		if(roleName=='0'){
+			$(eligibleDialog).find('font[name=appRoleNoItemMsg]').show();
+			canAdd = false;
+		}
+		
+		if(isDuplicate(roleName,roleEligibleList,null)){
+			$(eligibleDialog).find('font[name=appRoleErrorMsg]').show();
+			canAdd = false;
+		}
+		
+		if(!canAdd){
+			return;
+		}
+		var options = $(eligibleDialog).find('select[name=roleName]');
+		$(options).prop("selectedIndex", 1); 
+		roleEligibleList.push(roleName);
+		reloadRoleEligibleTable();
+	});
+	
+	$(eligibleDialog).find('.btn-form-panel button[name=addOrgBtn]').click(function(){
+		resetOrgEligibleErrorText();
+		var orgname = $(eligibleDialog).find('input[name=orgname]').val();
+		var orgcode = $(eligibleDialog).find('input[name=orgcode]').val();
+		
+		var canAdd = true;
+		var organize = { orgname : orgname.slice(),
+					orgcode : orgcode.slice()
+				  }
+		
+		var orgnameshow = $(eligibleDialog).find('input[name=orgNameShow]').val();
+		
+		if(orgnameshow!='' && orgname==''){
+			$(eligibleDialog).find('font[name=orgNamePickMsg]').show();
+			return;
+		}
+		
+		if(orgnameshow==''){
+			$(eligibleDialog).find('font[name=orgNameNullMsg]').show();
+			return;
+		}
+		
+		if(isDuplicate(orgname,orgEligibleList,"orgname")){
+			$(eligibleDialog).find('font[name=orgNameErrorMsg]').show();
+			return;
+		}
+		
+
+		if(isDuplicate(orgname,eligibleList,"orgname")){
+			$(eligibleDialog).find('font[name=orgNameErrorMsg]').show();
+			return;
+		}
+		
+		if(isDuplicate(orgname,orgEligibleList,"orgname")){
+			$(eligibleDialog).find('font[name=orgNameErrorMsg]').show();
+			return;
+		}
+		
+		console.log(organize);
+		orgEligibleList.push(organize);
+		$(eligibleDialog).find('input[name=orgname]').val('');
+		$(eligibleDialog).find('input[name=orgcode]').val('');
+		$(eligibleDialog).find('input[name=orgNameShow]').val('');
+		reloadOrgEligibleTable();
+	});
+	
+	$(eligibleDialog).find('.btn-form-panel button[name=resetRoleBtn]').click(function(){
+		resetRoleEligibleErrorText();
+		var index = $(eligibleDialog).find('input[name=idx]').val();
+		var options = $(eligibleDialog).find('select[name=roleName]');
+		$(options).prop("selectedIndex", 1); 
+		
+		if(!index){
+			resetRoleEligible();
+			return;
+		}
+	});
+	
+	$(eligibleDialog).find('.btn-form-panel button[name=resetOrgBtn]').click(function(){
+		resetOrgEligibleErrorText();
+		$(eligibleDialog).find('input[name=orgname]').val('');
+		$(eligibleDialog).find('input[name=orgcode]').val('');
+		$(eligibleDialog).find('input[name=orgNameShow]').val('');
+	});
+	
+	$(eligibleDialog).find('table[name=organizeTable]').on( 'click', '.deleteOrgBtn', function () {
+		resetOrgEligibleErrorText();
+		var index = $(this).closest('td').parent()[0].sectionRowIndex;
+		$("#dialog-confirm").dialog("open");
+		$("#dialog-confirm").dialog({
+		        autoOpen: false, 
+		        modal: true,
+		        draggable : false,
+		        resizable : false,
+		        buttons : [{
+		        	text : "Confirm",
+		        	click : function(){
+		        		orgEligibleList.splice(index-1,1);
+		        		reloadOrgEligibleTable();
+		        		reloadEligibleTable();
+		        		$(this).dialog("close");
+		        	}
+		        },{
+		        	text : "Cancel",
+		        	class : "red-btn",
+		        	click : function(){
+		        		$(this).dialog("close");
+		        	}
+		        }]	
+		    });
+	});
+	
+	$(eligibleDialog).find('table[name=roleEligibleTable]').on( 'click', '.deleteRoleBtn', function () {
+		resetRoleEligibleErrorText();
+		var index = $(this).closest('td').parent()[0].sectionRowIndex;
+		$("#dialog-confirm").dialog("open");
+		$("#dialog-confirm").dialog({
+		        autoOpen: false, 
+		        modal: true,
+		        draggable : false,
+		        resizable : false,
+		        buttons : [{
+		        	text : "Confirm",
+		        	click : function(){
+		        		roleEligibleList.splice(index-1,1);
+		        		reloadRoleEligibleTable();
+		        		reloadEligibleTable();
+		        		$(this).dialog("close");
+		        	}
+		        },{
+		        	text : "Cancel",
+		        	class : "red-btn",
+		        	click : function(){
+		        		$(this).dialog("close");
+		        	}
+		        }]	
+		    });
+	});
+	
+	//insert
+	$(eligibleDialog).find('.btn-dialog-panel button[name=saveBtn]').click(function(){
+		resetEligibleErrorText();
+		
+		var canAdd = true;
+		var index = $(eligibleDialog).find('input[name=idx]').val();
+		
+		if(index){
+			var orgname = $(eligibleDialog).find('input[name=orgname]').val();
+			var orgcode = $(eligibleDialog).find('input[name=orgcode]').val();
+			var eligible = {
+					orgname : orgname,
+					orgcode : orgcode,
+					roles : roleEligibleList
+			}
+			eligibleList[index] = eligible;
+			resetRoleEligible();
+			reloadEligibleTable();
+			$(eligibleDialog).dialog('close');
+			return;
+		}
+		
+		
+		if(orgEligibleList.length>0){
+			$.each(orgEligibleList,function(i,org){
+				if(isDuplicate(org.orgname,eligibleList,"orgname")){
+					$(eligibleDialog).find('font[name=orgNameErrorMsg]').show();
+					return;
+				}
+			});
+			
+			$.each(orgEligibleList,function(i,org){
+				var eligible = {
+						orgname : org.orgname,
+						orgcode : org.orgcode,
+						roles : roleEligibleList
+				}
+				eligibleList.push(eligible);
+			});
+			
+			resetRoleEligible();
+			reloadEligibleTable();
+			$(eligibleDialog).dialog('close');
+				
+		}else{
+			$(eligibleDialog).find('font[name=orgNameNullMsg]').show();
+			return;
+		}
+			
+	});
+	
+	$(eligibleDialog).find('.btn-dialog-panel button[name=cancelBtn]').click(function(){
+		resetRoleEligible();
+		$(eligibleDialog).dialog('close');
+		
+	});
+	
+	$('#eligiblePanel').find('table[name=eligibleTable]').on( 'click', '.deleteBtn', function () {
+		
+		var index = $(this).closest('td').parent()[0].sectionRowIndex;
+		$("#dialog-confirm").dialog("open");
+		$("#dialog-confirm").dialog({
+			autoOpen: false,
+			modal: true,
+	        draggable : false,
+	        resizable : false,
+			modal: true,
+			buttons : [{
+			    	text : "Confirm",
+			    	click : function(){
+			    		eligibleList.splice(index-1,1);
+						reloadEligibleTable();
+						$(this).dialog("close");
+			    	}
+				},{
+					text : "Cancel",
+					class : "red-btn",
+					click : function(){
+						$(this).dialog("close");
+					}
+			}]	
+		});
+	});
+	
+	$('#eligiblePanel').find('table[name=eligibleTable]').on( 'click', '.editBtn', function () {
+		$(eligibleDialog).find('div[name=showSelectOrg]').hide();
+		$(eligibleDialog).find('div[name=eligibleAddOrgPanel]').hide();
+		$(eligibleDialog).find('div[name=eligibleOrgPanel]').attr("class","col-md-12");
+		$(eligibleDialog).find('div[name=eligibleRolePanel]').attr("class","col-md-12");
+		var index = $(this).closest('td').parent()[0].sectionRowIndex - 1;
+		
+		resetRoleEligible();
+		resetEligibleErrorText();
+		
+		var eligible = eligibleList[index];
+		
+		roleEligibleList = eligible.roles.slice();
+		reloadRoleEligibleTable();
+		
+		if(roleApplicationTemp.length==0){
+			var option = options.find('option[class=option0]').clone();
+			$(option).removeClass('option0');
+			$(option).text("No items available");
+			$(option).val("0");
+			$(option).show();
+			$(options).append(option);
+		}
+
+		var options = $(eligibleDialog).find('select[name=roleName]');
+		options.find('option[class!=option0]').remove();
+		
+		$.each(roleApplicationTemp, function(i, role) {
+			var option = options.find('option[class=option0]').clone();
+			$(option).removeClass('option0');
+			$(option).text(role.appRoleName);
+			$(option).val(role.appRoleName);
+			$(option).show();
+			$(options).append(option);
+		});
+		
+		var options = $(eligibleDialog).find('select[name=roleName]');
+		$(options).prop("selectedIndex", 1); 
+		
+		$(eligibleDialog).find('input[name=orgNameShow]').val(eligible.orgname);
+		$(eligibleDialog).find('input[name=orgname]').val(eligible.orgname);
+		$(eligibleDialog).find('input[name=orgNameShow]').attr("disabled", "disabled");
+		
+		
+		$(eligibleDialog).find('input[name=idx]').val(index);
+		$(eligibleDialog).dialog('open');
+		
+	});
+	
+	function reloadEligibleTable(){
+		var table = $('#eligiblePanel').find('table[name=eligibleTable]');
+		var eligibleTableBody = $(table).find('tbody');
+		$(eligibleTableBody).find('tr[class!=tr0]').remove();
+		$.each(eligibleList, function(i, eligible) {
+			var row = $(table).find('tbody tr[class=tr0]').clone();
+			$(row).removeClass('tr0');
+			$(row).find('td[data-idx]').text(++i);
+			$(row).find('td[data-name]').text(eligible.orgname);
+			var role_text = "";
+			$.each(eligible.roles,function(i,role){
+				role_text += (i+1)+". "+role;
+				if(i<eligible.roles.length-1){
+					role_text += '<br />';
+				}
+			});
+
+			$(row).find('td[data-role]').html(role_text);
+			$(row).show();
+			$(eligibleTableBody).append($(row));
+		});
+	}
+	
+
+	function reloadOrgEligibleTable(){
+		var table = $(eligibleDialog).find('table[name=organizeTable]');
+		var orgEligibleTableBody = $(table).find('tbody');
+		$(orgEligibleTableBody).find('tr[class!=tr0]').remove();
+		$.each(orgEligibleList, function(i, org) {
+			var row = $(table).find('tbody tr[class=tr0]').clone();
+			$(row).removeClass('tr0');
+			$(row).find('td[data-idx]').text(++i);
+			$(row).find('td[data-orgname]').text(org.orgname);
+			
+			$(row).show();
+			$(orgEligibleTableBody).append($(row));
+		});
+	}
+	
+	function reloadRoleEligibleTable(){
+		var table = $(eligibleDialog).find('table[name=roleEligibleTable]');
+		var roleEligibleTableBody = $(table).find('tbody');
+		$(roleEligibleTableBody).find('tr[class!=tr0]').remove();
+		$.each(roleEligibleList, function(i, role) {
+			var row = $(table).find('tbody tr[class=tr0]').clone();
+			$(row).removeClass('tr0');
+			$(row).find('td[data-idx]').text(++i);
+			$(row).find('td[data-rolename]').text(role);
+			
+			if(role=='Default'){
+				$(row).find('button').hide();
+			}
+			
+			$(row).show();
+			$(roleEligibleTableBody).append($(row));
+		});
+	}
+	
+	 /*]]>*/
+});
+
